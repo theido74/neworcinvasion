@@ -35,8 +35,6 @@ class Player(pygame.sprite.Sprite):
         self.game.music.shoot_sound.play()
         self.allprojectiles.add(Projectiles(self, self.game))
 
-
-
     def remove(self):
         self.game.allplayer.remove(self)
     

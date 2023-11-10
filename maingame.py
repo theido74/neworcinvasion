@@ -24,30 +24,33 @@ class Game:
         self.allprojectilesboss = pygame.sprite.Group()
         self.allexploses = pygame.sprite.Group()
         self.score = 0
-        self.level = 0
         self.music = Sound()
         self.bossspawned = False
+        self.enemyremain = 0
 
     def start(self):
         self.isplaying = True 
         for _ in range(5):   
             self.spawnenemy()
-    
+            print(self.enemyremain)
+            
     def startlvl1(self):
         self.isplaying = True 
         for _ in range(5):   
             self.spawnenemyboat()
-   
-    
-    def check_level_completion(self):
-        if len(self.allenemies) == 0 and not self.bossspawned:
-                self.spawnboss()
-                self.bossspawned = True
-                print('level', self.level)
-                self.startlvl1()
-        
+            print(self.enemyremain)
+
+    def startboss(self):
+        if self.enemyremain == 0:
+            self.spawnboss()
+
+    def nextlevel(self):
+        self.bossspawned = False
+        self.player.health = self.player.maxhealth
+        self.enemyremain = 0
+
     def gameover (self):
-        self.level = 0
+        self.level_number = 0
         self.score = 0
         self.allenemies = pygame.sprite.Group()
         self.player.health = self.player.maxhealth
@@ -110,7 +113,6 @@ class Game:
             projectile.move()
         self.enemyonaboat.allprojectilesenemyonaboat.draw(screen)
 
-        self.check_level_completion()
         pygame.display.flip()#maj ecran
 
     
@@ -118,14 +120,20 @@ class Game:
         self.enemy in self.allenemies
         self.enemy = Enemy(self)
         self.allenemies.add(self.enemy)
+        self.enemyremain += 1
 
     def spawnenemyboat(self):
         self.enemyonaboat in self.allenemiesonaboat
         self.enemyonaboat = EnemyOnBoat(self)
         self.allenemiesonaboat.add(self.enemyonaboat)
+        self.enemyremain += 1
 
     def spawnboss(self):
         self.boss = Boss(self)
         self.allboss.add(self.boss)
+        self.enemyremain += 1
+        self.bossspawned = True
+        print('boss', self.enemyremain)
+
 
 

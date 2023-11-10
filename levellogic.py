@@ -2,6 +2,7 @@ import pygame
 from maingame import Game
 
 class Level:
+    
     def __init__(self, level_number, background_path):
         self.level_number = level_number
         self.background = pygame.image.load(background_path).convert_alpha()
@@ -10,7 +11,9 @@ class Level:
         self.y_background = 0
         self.running = True
 
+
     def run_level(self, screen, clock):
+        level_completed = False
         while self.running:
             screen.fill((0, 0, 0))  # Effacer l'écran
 
@@ -25,13 +28,11 @@ class Level:
 
             if self.game.isplaying:
                 self.game.updatescore(screen)
+            
             else:
                 screen.blit(self.banner, (50, 150))
-                # Gérer le score ou d'autres éléments spécifiques au niveau
-
                 pygame.display.flip()
 
-            clock.tick(60)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -42,11 +43,27 @@ class Level:
                     if event.key == pygame.K_SPACE:
                         self.game.player.launchprojectile()
 
-                    if event.key == pygame.K_s:
+                    if event.key == pygame.K_s and self.level_number == 0:
                         self.game.start()
+                    
+                    if event.key == pygame.K_s and self.level_number == 1:
+                        self.game.startlvl1()
+                        
 
                 elif event.type == pygame.KEYUP:
                     self.game.pressed[event.key] = False
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False:
+                self.game.startboss()
+            
+            if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed:
+                self.level_number +=1
+                level_completed = True
+                print('level',self.level_number)
+
+            if self.level_number == 1:
+                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\fondlvl1.jpg').convert_alpha()
+             
 
             if self.game.pressed.get(pygame.K_RIGHT) and self.game.player.rect.x + self.game.player.rect.width < screen.get_width():
                 self.game.player.move_right()
@@ -56,6 +73,9 @@ class Level:
                 self.game.player.move_up()
             if self.game.pressed.get(pygame.K_UP) and self.game.player.rect.y > 0:
                 self.game.player.move_down()
+
+            clock.tick(60)
+
 def run_game():
 # Initialisation de Pygame
     pygame.init()
@@ -72,15 +92,8 @@ def run_game():
     # Boucle principale du jeu
     running = True
     while running:
-        if current_level.level_number == 0:
+        if current_level.level_number == 0: 
             current_level.run_level(screen, clock)
-            if not current_level.running:  # Si le niveau est terminé
-                current_level = level_1  # Passer au niveau suivant
-        elif current_level.level_number == 1:
-            current_level.run_level(screen, clock)
-            if not current_level.running:  # Si le niveau est terminé
-                # Par exemple, vous pourriez charger un niveau suivant ici
-                pass  # Mettre à jour pour charger d'autres niveaux
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -89,3 +102,4 @@ def run_game():
         pygame.display.update()
 
     pygame.quit()
+run_game()

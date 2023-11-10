@@ -25,8 +25,6 @@ class Enemy(pygame.sprite.Sprite):
         self.last_shot_time = 0  # Temps du dernier tir
         self.boss = Boss
 
-
-
     def move(self):
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity
@@ -55,7 +53,6 @@ class Enemy(pygame.sprite.Sprite):
     def launchprojectilesenemy(self):
         self.allprojectilesenemy.add(ProjectilesEnemy(self, self.game))
 
-
     def kill(self):
         super().kill()
 
@@ -76,6 +73,8 @@ class Enemy(pygame.sprite.Sprite):
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
             self.game.score += 15
+            self.game.enemyremain -=1
+            print(self.game.enemyremain)
        
     def remove(self):
         self.game.remove(self)
@@ -101,9 +100,6 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         self.attack = 2
         self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
-        self.boss = Boss
-
-
 
     def move(self):
         if self.rect.x < self.position_x:
@@ -133,10 +129,8 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
     def launchprojectilesenemyonaboat(self):
         self.allprojectilesenemyonaboat.add(ProjectilesEnemyOnaBoat(self, self.game))
 
-
     def kill(self):
         super().kill()
-        print('kill enemy remain' )
 
     def updatehealthbar(self, surface):
         barcolor = (71, 209,71)
@@ -155,13 +149,11 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
             self.game.score += 7
-        
-       
-       
+            self.game.enemyremain -=1
+            print('enemyonboat killed', self.game.enemyremain)
+
     def remove(self):
         self.game.remove(self)
-
-
 
 
 class Boss(Enemy, pygame.sprite.Sprite):
@@ -184,8 +176,6 @@ class Boss(Enemy, pygame.sprite.Sprite):
         self.attack = 7
         self.shoot_cooldown = 1000  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
-
-
 
     def move(self):
         if self.rect.x < self.position_x:
@@ -210,10 +200,10 @@ class Boss(Enemy, pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
-            self.game.score += 25  
-            self.game.level += 1
+            self.game.score += 25 
+            self.game.enemyremain -=1
+            print('boss killed', self.game.enemyremain)
 
-        
     def launchprojectilesboss(self):
         self.allprojectilesboss.add(ProjectilesBoss(self, self.game))
 
@@ -228,7 +218,6 @@ class Boss(Enemy, pygame.sprite.Sprite):
 
     def kill(self):
         super().kill()
-
         
     def updatehealthbar(self, surface):
         barcolor = (71, 209,71)
