@@ -1,6 +1,6 @@
 import pygame
 from random import randint
-from projectiles import ProjectilesEnemy, ProjectilesBoss, ProjectilesEnemyOnaBoat
+from projectiles import ProjectilesEnemy, ProjectilesBoss, ProjectilesEnemyOnaBoat, ProjectilesBossBoat, ProjectilesWargPoison, ProjectilesBossWarg
 from explose import Explose
 
 class Enemy(pygame.sprite.Sprite):
@@ -82,7 +82,7 @@ class Enemy(pygame.sprite.Sprite):
 class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 5
+        self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orconaboat1-pixelicious.png')
         self.image = pygame.transform.scale(self.image, (110, 110))
         self.image = pygame.transform.flip(self.image, False, True)
@@ -151,6 +151,83 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
             self.game.score += 7
             self.game.enemyremain -=1
             print('enemyonboat killed', self.game.enemyremain)
+
+    def remove(self):
+        self.game.remove(self)
+
+
+class EnemyWarg(Enemy, pygame.sprite.Sprite):
+    def __init__(self, game):
+        super().__init__(game)
+        self.velocity = 4
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\warg.png')
+        self.image = pygame.transform.scale(self.image, (120, 110))
+        self.image = pygame.transform.flip(self.image, False, True)
+        self.rect = self.image.get_rect()
+        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.y = 1
+        self.position_x = randint(0, (460 - self.rect.width))
+        self.position_y = randint(0, 300)
+        self.projectilewargpoison = ProjectilesWargPoison(self, game)
+        self.allprojectilewargpoison = pygame.sprite.Group()
+        self.allwarg = pygame.sprite.Group()
+        self.game = game
+        self.health = 300 # Nombre de vies initiales
+        self.maxhealth = self.health
+        self.attack = 2
+        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.last_shot_time = 0  # Temps du dernier tir
+
+    def move(self):
+        if self.rect.x < self.position_x:
+            self.rect.x += self.velocity
+        if self.rect.x > self.position_x:          
+            self.rect.x-= self.velocity
+        if abs(self.rect.x - self.position_x) < self.velocity/2:
+           self.position_x = randint(0, (460 - self.rect.width))
+           self.launchprojectileswargpoison() 
+        if self.rect.y < self.position_y:
+            self.rect.y += self.velocity
+        if self.rect.y > self.position_y:
+            self.rect.y -= self.velocity
+        if abs(self.rect.y - self.position_y) < self.velocity:
+           self.position_y = randint(0, 550)
+        self.check_shoot()
+
+    def check_shoot(self):
+        current_time = pygame.time.get_ticks()  # Obtenez le temps actuel en millisecondes
+        if current_time - self.last_shot_time >= self.shoot_cooldown:
+            self.shoot()
+            self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
+
+    def shoot(self):
+        self.allprojectilewargpoison.add(ProjectilesWargPoison(self, self.game))        
+    
+    def launchprojectileswargpoison(self):
+        self.allprojectilewargpoison.add(ProjectilesWargPoison(self, self.game))
+
+    def kill(self):
+        super().kill()
+
+    def updatehealthbar(self, surface):
+        barcolor = (71, 209,71)
+        bgbarcolor = (230, 0, 0)
+        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
+        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+
+        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
+        pygame.draw.rect(surface, barcolor, barposition)
+    
+    def damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.game.music.explose_sound.play()
+            self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
+            # L'ennemi est vaincu, vous pouvez prendre des mesures ici
+            self.kill()
+            self.game.score += 7
+            self.game.enemyremain -=1
+            print('warg killed', self.game.enemyremain)
 
     def remove(self):
         self.game.remove(self)
@@ -228,3 +305,149 @@ class Boss(Enemy, pygame.sprite.Sprite):
         pygame.draw.rect(surface, bgbarcolor, bgbarposition)
         pygame.draw.rect(surface, barcolor, barposition)
 
+
+class BossBoat(Enemy, pygame.sprite.Sprite):
+    def __init__(self, game):
+        super().__init__(game)
+        self.velocity = 2
+        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\Bigboatorc.png')
+        self.image = pygame.transform.scale(self.image, (90, 90))
+        self.rect = self.image.get_rect()
+        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.y = 1
+        self.position_x = randint(0, (460 - self.rect.width))
+        self.position_y = randint(0, 300)
+        self.projectilebossboat = ProjectilesBossBoat(self, game)
+        self.allprojectilesbossboat = pygame.sprite.Group()
+        self.allboss = pygame.sprite.Group()
+        self.game = game
+        self.health = 350 # Nombre de vies initiales
+        self.maxhealth = self.health
+        self.attack = 19
+        self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
+        self.last_shot_time = 0  # Temps du dernier tir
+
+    def move(self):
+        if self.rect.x < self.position_x:
+            self.rect.x += self.velocity
+        if self.rect.x > self.position_x:          
+            self.rect.x-= self.velocity
+        if abs(self.rect.x - self.position_x) < self.velocity/2:
+           self.position_x = randint(0, (460 - self.rect.width))
+           self.launchprojectilesboss() 
+        if self.rect.y < self.position_y:
+            self.rect.y += self.velocity
+        if self.rect.y > self.position_y:
+            self.rect.y -= self.velocity
+        if abs(self.rect.y - self.position_y) < self.velocity:
+           self.position_y = randint(0, 250)
+        self.check_shoot()
+
+    def damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.game.music.explose_boss_sound.play()
+            self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
+            # L'ennemi est vaincu, vous pouvez prendre des mesures ici
+            self.kill()
+            self.game.score += 25 
+            self.game.enemyremain -=1
+            print('boss boat killed', self.game.enemyremain)
+
+    def launchprojectilesboss(self):
+        self.allprojectilesbossboat.add(ProjectilesBossBoat(self, self.game))
+
+    def check_shoot(self):
+        current_time = pygame.time.get_ticks()  # Obtenez le temps actuel en millisecondes
+        if current_time - self.last_shot_time >= self.shoot_cooldown:
+            self.shoot()
+            self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
+
+    def shoot(self):
+        self.allprojectilesbossboat.add(ProjectilesBossBoat(self, self.game))        
+
+    def kill(self):
+        super().kill()
+        
+    def updatehealthbar(self, surface):
+        barcolor = (71, 209,71)
+        bgbarcolor = (230, 0, 0)
+        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
+        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+
+        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
+        pygame.draw.rect(surface, barcolor, barposition)
+
+
+
+class BossWarg(Enemy, pygame.sprite.Sprite):
+    def __init__(self, game):
+        super().__init__(game)
+        self.velocity = 2
+        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orcwarg.png')
+        self.image = pygame.transform.scale(self.image, (120, 120))
+        self.rect = self.image.get_rect()
+        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.y = 1
+        self.position_x = randint(0, (460 - self.rect.width))
+        self.position_y = randint(0, 300)
+        self.projectilebosswarg = ProjectilesBossWarg(self, game)
+        self.allprojectilesbosswarg = pygame.sprite.Group()
+        self.allboss = pygame.sprite.Group()
+        self.game = game
+        self.health = 350 # Nombre de vies initiales
+        self.maxhealth = self.health
+        self.attack = 19
+        self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
+        self.last_shot_time = 0  # Temps du dernier tir
+
+    def move(self):
+        if self.rect.x < self.position_x:
+            self.rect.x += self.velocity
+        if self.rect.x > self.position_x:          
+            self.rect.x-= self.velocity
+        if abs(self.rect.x - self.position_x) < self.velocity/2:
+           self.position_x = randint(0, (460 - self.rect.width))
+           self.launchprojectilesboss() 
+        if self.rect.y < self.position_y:
+            self.rect.y += self.velocity
+        if self.rect.y > self.position_y:
+            self.rect.y -= self.velocity
+        if abs(self.rect.y - self.position_y) < self.velocity:
+           self.position_y = randint(0, 250)
+        self.check_shoot()
+
+    def damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.game.music.explose_boss_sound.play()
+            self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
+            # L'ennemi est vaincu, vous pouvez prendre des mesures ici
+            self.kill()
+            self.game.score += 25 
+            self.game.enemyremain -=1
+            print('boss warg killed', self.game.enemyremain)
+
+    def launchprojectilesboss(self):
+        self.allprojectilesbosswarg.add(ProjectilesBossWarg(self, self.game))
+
+    def check_shoot(self):
+        current_time = pygame.time.get_ticks()  # Obtenez le temps actuel en millisecondes
+        if current_time - self.last_shot_time >= self.shoot_cooldown:
+            self.shoot()
+            self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
+
+    def shoot(self):
+        self.allprojectilesbosswarg.add(ProjectilesBossWarg(self, self.game))        
+
+    def kill(self):
+        super().kill()
+        
+    def updatehealthbar(self, surface):
+        barcolor = (71, 209,71)
+        bgbarcolor = (230, 0, 0)
+        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
+        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+
+        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
+        pygame.draw.rect(surface, barcolor, barposition)

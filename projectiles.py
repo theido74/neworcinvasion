@@ -27,6 +27,11 @@ class Projectiles(pygame.sprite.Sprite):
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
             enemy.damage(self.player.attack)
 
+        warg_hit=pygame.sprite.spritecollide(self, self.game.allwarg, False)
+        for enemy in warg_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            enemy.damage(self.player.attack)
+
 
         self.game.player.allprojectiles.add(self)
 
@@ -99,6 +104,35 @@ class ProjectilesEnemyOnaBoat(ProjectilesEnemy):
 
 
 
+class ProjectilesWargPoison(ProjectilesEnemy):
+    def __init__(self, warg, game):
+        super().__init__(warg, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\wargpoison.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.rect = self.image.get_rect()
+        self.warg = warg
+        self.game = game
+        self.rect.x = warg.rect.x - 20
+        self.rect.y = warg.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.warg.attack)
+
+        self.game.warg.allprojectilesenemy.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
+
+
 class ProjectilesBoss (ProjectilesEnemy):
     def __init__(self, boss, game):
         super().__init__(boss, game)
@@ -125,3 +159,58 @@ class ProjectilesBoss (ProjectilesEnemy):
 
     def remove(self):
         self.game.allprojectilesboss.remove(self)
+
+class ProjectilesBossBoat (ProjectilesEnemy):
+    def __init__(self, bossboat, game):
+        super().__init__(bossboat, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\boulet.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.rect = self.image.get_rect()
+        self.bossboat = bossboat
+        self.game = game
+        self.rect.x = bossboat.rect.x - 20
+        self.rect.y = bossboat.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.bossboat.attack)
+
+        self.game.bossboat.allprojectilesbossboat.add(self)
+
+    def remove(self):
+        self.game.allprojectilesbossboat.remove(self)
+
+
+class ProjectilesBossWarg (ProjectilesEnemy):
+    def __init__(self, bosswarg, game):
+        super().__init__(bosswarg, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebosswarg.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.rect = self.image.get_rect()
+        self.bosswarg = bosswarg
+        self.game = game
+        self.rect.x = bosswarg.rect.x - 20
+        self.rect.y = bosswarg.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.bosswarg.attack)
+
+        self.game.bosswarg.allprojectilesbosswarg.add(self)
+
+    def remove(self):
+        self.game.allprojectilesbosswarg.remove(self)

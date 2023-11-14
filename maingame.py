@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-from enemy import Enemy, Boss, EnemyOnBoat
+from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg
 from sound import Sound
 
 
@@ -11,21 +11,30 @@ class Game:
         self.player = Player(self)
         self.enemy = Enemy(self)
         self.enemyonaboat = EnemyOnBoat(self)
+        self.warg = EnemyWarg(self)
         self.boss = Boss(self)
+        self.bossboat = BossBoat(self)
+        self.bosswarg = BossWarg(self)
         self.allboss = pygame.sprite.Group()
         self.allplayers = pygame.sprite.Group()
         self.allplayers.add(self.player)
         self.pressed = {}
         self.allenemies = pygame.sprite.Group()
         self.allenemiesonaboat = pygame.sprite.Group()
+        self.allwarg = pygame.sprite.Group()
         self.allprojectiles = pygame.sprite.Group()
         self.allprojectilesenemy = pygame.sprite.Group()
         self.allprojectilesenemyonaboat = pygame.sprite.Group()
+        self.allprojectileswargpoison = pygame.sprite.Group()
         self.allprojectilesboss = pygame.sprite.Group()
+        self.allprojectilesbossboat = pygame.sprite.Group()
+        self.allprojectilesbosswarg = pygame.sprite.Group()
         self.allexploses = pygame.sprite.Group()
         self.score = 0
         self.music = Sound()
         self.bossspawned = False
+        self.firstspawn = False
+        self.secondspawn = False
         self.enemyremain = 0
 
     def start(self):
@@ -33,21 +42,59 @@ class Game:
         for _ in range(5):   
             self.spawnenemy()
             print(self.enemyremain)
+    def startsecondspawn(self):
+        self.isplaying = True
+        for _ in range(8):
+            self.spawnenemy()
+            print(self.enemyremain)
+        self.secondspawn = True
             
     def startlvl1(self):
         self.isplaying = True 
         for _ in range(5):   
             self.spawnenemyboat()
             print(self.enemyremain)
+        self.firstspawn = True
+    def startlvl1second(self):
+        self.isplaying = True 
+        for _ in range(8):   
+            self.spawnenemyboat()
+        self.secondspawn = True
+
+    def startlvl2(self):
+        self.isplaying = True
+        for _ in range(5):
+            self.spawnwarg()
+            print(self.enemyremain)
+        self.firstspawn = True
+    def startlvl2second(self):
+        self.isplaying = True 
+        for _ in range(8):   
+            self.spawnwarg()
+        self.secondspawn = True
+    
+
 
     def startboss(self):
         if self.enemyremain == 0:
             self.spawnboss()
+            self.bossspawned = True
+    def startbossboat(self):
+        if self.enemyremain == 0:
+            self.spawnbossboat()
+            self.bossspawned = True
+    def startbosswarg(self):
+        if self.enemyremain == 0:
+            self.spawnbosswarg()
+            self.bossspawned = True
+
+
 
     def nextlevel(self):
         self.bossspawned = False
         self.player.health = self.player.maxhealth
         self.enemyremain = 0
+        self.secondspawn = False
 
     def gameover (self):
         self.level_number = 0
@@ -56,6 +103,7 @@ class Game:
         self.player.health = self.player.maxhealth
         self.isplaying = False
         self.bossspawned = False
+        
 
     def updatescore(self, screen):
         font = pygame.font.SysFont('Small font', 20, 0)
@@ -113,6 +161,33 @@ class Game:
             projectile.move()
         self.enemyonaboat.allprojectilesenemyonaboat.draw(screen)
 
+        for bossboat in self.allboss:
+            bossboat.move()
+            bossboat.updatehealthbar(screen)
+        self.allboss.draw(screen)
+
+        for projectile in self.bossboat.allprojectilesbossboat:
+            projectile.move()
+        self.bossboat.allprojectilesbossboat.draw(screen)
+
+        for warg in self.allwarg:
+            warg.move()
+            warg.updatehealthbar(screen)
+        self.allwarg.draw(screen)
+
+        for projectile in self.warg.allprojectilewargpoison:
+            projectile.move()
+        self.warg.allprojectilewargpoison.draw(screen)
+
+        for bosswarg in self.allboss:
+            bosswarg.move()
+            bosswarg.updatehealthbar(screen)
+        self.allboss.draw(screen)
+
+        for projectile in self.bosswarg.allprojectilesbosswarg:
+            projectile.move()
+        self.bosswarg.allprojectilesbosswarg.draw(screen)
+
         pygame.display.flip()#maj ecran
 
     
@@ -128,12 +203,33 @@ class Game:
         self.allenemiesonaboat.add(self.enemyonaboat)
         self.enemyremain += 1
 
+    def spawnwarg(self):
+        self.warg in self.allwarg
+        self.warg = EnemyWarg(self)
+        self.allwarg.add(self.warg)
+        self.enemyremain +=1
+
     def spawnboss(self):
         self.boss = Boss(self)
         self.allboss.add(self.boss)
         self.enemyremain += 1
         self.bossspawned = True
         print('boss', self.enemyremain)
+    
+    def spawnbossboat(self):
+        self.bossboat = BossBoat(self)
+        self.allboss.add(self.bossboat)
+        self.enemyremain += 1
+        self.bossspawned = True
+        print('boss', self.enemyremain)
+    
+    def spawnbosswarg(self):
+        self.bosswarg = BossWarg(self)
+        self.allboss.add(self.bosswarg)
+        self.enemyremain += 1
+        self.bossspawned = True
+        print('boss warg', self.enemyremain)
+    
 
 
 

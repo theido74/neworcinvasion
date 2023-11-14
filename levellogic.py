@@ -1,6 +1,6 @@
 import pygame
 from maingame import Game
-
+from text import Text, show_text_window, wait_for_key_press
 class Level:
     
     def __init__(self, level_number, background_path):
@@ -10,6 +10,8 @@ class Level:
         self.game = Game()
         self.y_background = 0
         self.running = True
+        self.showing_message = False
+
 
 
     def run_level(self, screen, clock):
@@ -43,27 +45,98 @@ class Level:
                     if event.key == pygame.K_SPACE:
                         self.game.player.launchprojectile()
 
-                    if event.key == pygame.K_s and self.level_number == 0:
+                    if event.key == pygame.K_s :
                         self.game.start()
                     
-                    if event.key == pygame.K_s and self.level_number == 1:
-                        self.game.startlvl1()
+                   
+                        
                         
 
                 elif event.type == pygame.KEYUP:
                     self.game.pressed[event.key] = False
 
-            if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False:
-                self.game.startboss()
-            
-            if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed:
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 0:
+                self.game.startsecondspawn()
+                self.game.allprojectiles.remove()
+
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 0:
+                self.game.startboss()   
+                self.game.allprojectiles.remove()
+
+
+            if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 0:
                 self.level_number +=1
                 level_completed = True
+                self.game.nextlevel()
+                self.showing_message = True
+                show_text_window(screen, "Niveau completed! Press sur 'S' to continue")
+                wait_for_key_press(pygame.K_s)
+                self.showing_message = False
+                self.game.allprojectilesboss.remove()
                 print('level',self.level_number)
-
+            
             if self.level_number == 1:
                 self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\fondlvl1.jpg').convert_alpha()
-             
+                level_completed = False
+ 
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 1:          
+                self.game.startlvl1()
+                print('startboat1')
+                self.game.allprojectilesenemyonaboat.remove()
+                self.game.allprojectiles.remove()
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 1:
+                self.game.startlvl1second()
+                self.game.allprojectilesenemyonaboat.remove()
+                self.game.allprojectiles.remove()
+                print('start boat 2nd')
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 1:
+                self.game.startbossboat()
+                self.game.allprojectilesbossboat.remove()
+
+            if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 1:
+                self.level_number +=1
+                level_completed = True
+                self.game.nextlevel()
+                self.showing_message = True
+                show_text_window(screen, "Niveau completed! Press sur 'S' to continue")
+                wait_for_key_press(pygame.K_s)
+                self.showing_message = False
+                self.game.firstspawn = False
+                print('level',self.level_number)
+
+            
+            if self.level_number == 2:
+                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond6.png').convert_alpha()
+                level_completed = False
+                self.game.allprojectiles.remove()
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 2:          
+                self.game.startlvl2()
+                print('startwarg1')
+                self.game.allprojectilesbossboat.remove()
+                self.game.allprojectiles.remove()
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 2:
+                self.game.startlvl2second()
+                self.game.allprojectileswargpoison.remove()
+                self.game.allprojectiles.remove()
+            
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 2:
+                self.game.startbosswarg()
+                self.game.allprojectileswargpoison.remove()
+                self.game.allprojectiles.remove()
+
+            
+
+            
+
+            
+ 
+
+            
 
             if self.game.pressed.get(pygame.K_RIGHT) and self.game.player.rect.x + self.game.player.rect.width < screen.get_width():
                 self.game.player.move_right()
@@ -85,15 +158,13 @@ def run_game():
 
     # Création des niveaux
     level_0 = Level(0, r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond1.png')
-    level_1 = Level(1, r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\fondlvl1.jpg')
 
     current_level = level_0  # Commencer par le niveau 0
 
     # Boucle principale du jeu
     running = True
     while running:
-        if current_level.level_number == 0: 
-            current_level.run_level(screen, clock)
+        current_level.run_level(screen, clock)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
