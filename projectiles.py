@@ -31,7 +31,21 @@ class Projectiles(pygame.sprite.Sprite):
         for enemy in warg_hit:
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
             enemy.damage(self.player.attack)
+        
+        dwarf_hit=pygame.sprite.spritecollide(self, self.game.alldwarf, False)
+        for enemy in dwarf_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            enemy.damage(self.player.attack)
 
+        gobelinarcher_hit=pygame.sprite.spritecollide(self, self.game.allgobelinarcher, False)
+        for enemy in gobelinarcher_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            enemy.damage(self.player.attack)
+
+        gobelinmassue_hit=pygame.sprite.spritecollide(self, self.game.allgobelinmassue, False)
+        for enemy in gobelinmassue_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            enemy.damage(self.player.attack)
 
         self.game.player.allprojectiles.add(self)
 
@@ -132,6 +146,88 @@ class ProjectilesWargPoison(ProjectilesEnemy):
         self.game.allprojectilesenemy.remove(self)
 
 
+class ProjectilesDwarf(ProjectilesEnemy):
+    def __init__(self, dwarf, game):
+        super().__init__(dwarf, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachenain.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.rect = self.image.get_rect()
+        self.dwarf = dwarf
+        self.game = game
+        self.rect.x = dwarf.rect.x - 20
+        self.rect.y = dwarf.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.dwarf.attack)
+
+        self.game.dwarf.allprojectilesenemy.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
+class ProjectilesGobelinArcher(ProjectilesEnemy):
+    def __init__(self, gobelinarcher, game):
+        super().__init__(gobelinarcher, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\lasergobelin.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.rect = self.image.get_rect()
+        self.gobelinarcher = gobelinarcher
+        self.game = game
+        self.rect.x = gobelinarcher.rect.x - 20
+        self.rect.y = gobelinarcher.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.gobelinarcher.attack)
+
+        self.game.gobelinarcher.allprojectilesenemy.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
+
+class ProjectilesGobelinMassue(ProjectilesEnemy):
+    def __init__(self, gobelinmassue, game):
+        super().__init__(gobelinmassue, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\massuegobelin.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.rect = self.image.get_rect()
+        self.gobelinmassue = gobelinmassue
+        self.game = game
+        self.rect.x = gobelinmassue.rect.x - 20
+        self.rect.y = gobelinmassue.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.gobelinmassue.attack)
+
+        self.game.gobelinmassue.allprojectilesenemy.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
 
 class ProjectilesBoss (ProjectilesEnemy):
     def __init__(self, boss, game):
@@ -214,3 +310,58 @@ class ProjectilesBossWarg (ProjectilesEnemy):
 
     def remove(self):
         self.game.allprojectilesbosswarg.remove(self)
+
+
+class ProjectilesBossDwarf (ProjectilesEnemy):
+    def __init__(self, bossdwarf, game):
+        super().__init__(bossdwarf, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebossnain.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.rect = self.image.get_rect()
+        self.bossdwarf = bossdwarf
+        self.game = game
+        self.rect.x = bossdwarf.rect.x - 20
+        self.rect.y = bossdwarf.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.bossdwarf.attack)
+
+        self.game.bossdwarf.allprojectilesbossdwarf.add(self)
+
+    def remove(self):
+        self.game.allprojectilesbossdwarf.remove(self)
+
+class ProjectilesBalrog (ProjectilesEnemy):
+    def __init__(self, balrog, game):
+        super().__init__(balrog, game)
+        self.velocity = 3
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fouetbalrog.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.rect = self.image.get_rect()
+        self.balrog = balrog
+        self.game = game
+        self.rect.x = balrog.rect.x - 35
+        self.rect.y = balrog.rect.y
+        self.initipos_y = self.rect.y
+
+    def move(self):
+        self.rect.y += self.velocity
+        if self.rect.y > 728: 
+            self.remove()
+        hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in hits:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            player.damage(self.balrog.attack)
+
+        self.game.bossbalrog.allprojectilesbossbalrog.add(self)
+
+    def remove(self):
+        self.game.allprojectilesbossbalrog.remove(self)

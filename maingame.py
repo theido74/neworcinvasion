@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg
+from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg, EnemyDwarf, BossDwarf, EnemyGobelinArcher, EnemyGobelinMassue, BossBalrog
 from sound import Sound
 
 
@@ -12,9 +12,14 @@ class Game:
         self.enemy = Enemy(self)
         self.enemyonaboat = EnemyOnBoat(self)
         self.warg = EnemyWarg(self)
+        self.dwarf = EnemyDwarf(self)
+        self.gobelinarcher = EnemyGobelinArcher(self)
+        self.gobelinmassue = EnemyGobelinMassue(self) 
         self.boss = Boss(self)
         self.bossboat = BossBoat(self)
         self.bosswarg = BossWarg(self)
+        self.bossdwarf = BossDwarf(self)
+        self.bossbalrog = BossBalrog(self)
         self.allboss = pygame.sprite.Group()
         self.allplayers = pygame.sprite.Group()
         self.allplayers.add(self.player)
@@ -22,13 +27,21 @@ class Game:
         self.allenemies = pygame.sprite.Group()
         self.allenemiesonaboat = pygame.sprite.Group()
         self.allwarg = pygame.sprite.Group()
+        self.alldwarf = pygame.sprite.Group()
+        self.allgobelinarcher = pygame.sprite.Group()
+        self.allgobelinmassue = pygame.sprite.Group()
         self.allprojectiles = pygame.sprite.Group()
         self.allprojectilesenemy = pygame.sprite.Group()
         self.allprojectilesenemyonaboat = pygame.sprite.Group()
         self.allprojectileswargpoison = pygame.sprite.Group()
+        self.allprojectilesdwarf = pygame.sprite.Group()
+        self.allprojectilesgobelinarcher = pygame.sprite.Group()
+        self.allprojectilesgobelinmassue = pygame.sprite.Group()
         self.allprojectilesboss = pygame.sprite.Group()
         self.allprojectilesbossboat = pygame.sprite.Group()
         self.allprojectilesbosswarg = pygame.sprite.Group()
+        self.allprojectilesbossdwarf = pygame.sprite.Group()
+        self.allprojectilesbossbalrog = pygame.sprite.Group()
         self.allexploses = pygame.sprite.Group()
         self.score = 0
         self.music = Sound()
@@ -72,6 +85,43 @@ class Game:
         for _ in range(8):   
             self.spawnwarg()
         self.secondspawn = True
+
+    def startlvl3(self):
+        self.isplaying = True
+        for _ in range(5):
+            self.spawndawrf()
+            print(self.enemyremain)
+        self.firstspawn = True
+    def startlvl3second(self):
+        self.isplaying = True
+        for _ in range(5):   
+            self.spawnenemy()
+            print(self.enemyremain)
+        for _ in range(5):
+            self.spawndawrf()
+            print(self.enemyremain)
+        self.secondspawn = True
+
+    def startlvl4(self):
+        self.isplaying = True
+        for _ in range(5):
+            self.spwangobelinarcher()
+            print(self.enemyremain)
+        self.firstspawn = True
+        for _ in range(3):
+            self.spwangobelinmassue()
+            print(self.enemyremain)
+
+    def startlvl4second(self):
+        self.isplaying = True
+        for _ in range(3):
+            self.spwangobelinarcher()
+            print(self.enemyremain)
+        self.firstspawn = True
+        for _ in range(5):
+            self.spwangobelinmassue()
+            print(self.enemyremain)
+        self.secondspawn = True        
     
 
 
@@ -87,6 +137,16 @@ class Game:
         if self.enemyremain == 0:
             self.spawnbosswarg()
             self.bossspawned = True
+    def startbossdwarf(self):
+        if self.enemyremain == 0:
+            for _ in range(2):
+                self.spawnbossdwarf()
+                self.bossspawned = True
+
+    def startbossbalrog(self):
+        if self.enemyremain == 0:
+            self.spawnbossbalrog()
+            self.bossspawned = True
 
 
 
@@ -95,6 +155,7 @@ class Game:
         self.player.health = self.player.maxhealth
         self.enemyremain = 0
         self.secondspawn = False
+        self.allprojectiles.remove()
 
     def gameover (self):
         self.level_number = 0
@@ -188,6 +249,51 @@ class Game:
             projectile.move()
         self.bosswarg.allprojectilesbosswarg.draw(screen)
 
+        for dwarf in self.alldwarf:
+            dwarf.move()
+            dwarf.updatehealthbar(screen)
+        self.alldwarf.draw(screen)
+
+        for projectile in self.dwarf.allprojectiledwarf:
+            projectile.move()
+        self.dwarf.allprojectiledwarf.draw(screen)
+
+        for bossdwarf in self.allboss:
+            bossdwarf.move()
+            bossdwarf.updatehealthbar(screen)
+        self.allboss.draw(screen)
+
+        for projectile in self.bossdwarf.allprojectilesbossdwarf:
+            projectile.move()
+        self.bossdwarf.allprojectilesbossdwarf.draw(screen)
+
+        for gobelinarcher in self.allgobelinarcher:
+            gobelinarcher.move()
+            gobelinarcher.updatehealthbar(screen)
+        self.allgobelinarcher.draw(screen)
+
+        for projectile in self.gobelinarcher.allprojectilegobelinarcher:
+            projectile.move()
+        self.gobelinarcher.allprojectilegobelinarcher.draw(screen)
+
+        for gobelinmassue in self.allgobelinmassue:
+            gobelinmassue.move()
+            gobelinmassue.updatehealthbar(screen)
+        self.allgobelinmassue.draw(screen)
+
+        for projectile in self.gobelinmassue.allprojectilegobelinmassue:
+            projectile.move()
+        self.gobelinmassue.allprojectilegobelinmassue.draw(screen)
+
+        for bossbalrog in self.allboss:
+            bossbalrog.move()
+            bossbalrog.updatehealthbar(screen)
+        self.allboss.draw(screen)
+
+        for projectile in self.bossbalrog.allprojectilesbossbalrog:
+            projectile.move()
+        self.bossbalrog.allprojectilesbossbalrog.draw(screen)
+
         pygame.display.flip()#maj ecran
 
     
@@ -207,6 +313,24 @@ class Game:
         self.warg in self.allwarg
         self.warg = EnemyWarg(self)
         self.allwarg.add(self.warg)
+        self.enemyremain +=1
+
+    def spawndawrf(self):
+        self.dwarf in self.alldwarf
+        self.dwarf = EnemyDwarf(self)
+        self.alldwarf.add(self.dwarf)
+        self.enemyremain +=1
+
+    def spwangobelinarcher(self):
+        self.gobelinarcher in self.allgobelinarcher
+        self.gobelinarcher = EnemyGobelinArcher(self)
+        self.allgobelinarcher.add(self.gobelinarcher)
+        self.enemyremain +=1
+
+    def spwangobelinmassue(self):
+        self.gobelinmassue in self.allgobelinmassue
+        self.gobelinmassue = EnemyGobelinMassue(self)
+        self.allgobelinmassue.add(self.gobelinmassue)
         self.enemyremain +=1
 
     def spawnboss(self):
@@ -230,6 +354,20 @@ class Game:
         self.bossspawned = True
         print('boss warg', self.enemyremain)
     
+    def spawnbossdwarf(self):
+        self.bossdwarf = BossDwarf(self)
+        self.allboss.add(self.bossdwarf)
+        self.enemyremain += 1
+        self.bossspawned = True
+        print('boss warg', self.enemyremain)
+
+    def spawnbossbalrog(self):
+        self.bossbalrog = BossBalrog(self)
+        self.allboss.add(self.bossbalrog)
+        self.enemyremain += 1
+        self.bossspawned = True
+        print('boss warg', self.enemyremain)
+
 
 
 
