@@ -5,6 +5,7 @@ from classesql import User
 from databaseconnection import DBConnection
 from PIL import Image, ImageTk
 from levellogic import run_game
+from sound import Sound
 
 
 class Login:
@@ -34,33 +35,52 @@ class Login:
         self.newuserbutton = tk.Button(self.root, text='New here, click here and subscribe!',bg='purple', fg='gold', font=('Small Fonts', 17,), command=self.goto_new_user_form)
         self.newuserbutton.place(x=250, y= 520)
 
-    def launch_game(self):
-        self.root.withdraw()  # Fermez la fenêtre de connexion
-        # Démarrer le jeu ici
-        run_game()  # Démarrage du jeu (ajustez selon vos besoins)
-
-
 
     def goto_new_user_form(self):
         self.root.withdraw()
         root_new_user_form = tk.Toplevel(self.root)
         new_user_form = NewUserForm(root_new_user_form)
         new_user_form.run()
-    
 
+    def openstory1(self):
+        self.root.withdraw()
+        root_story1 = tk.Toplevel(self.root)
+        new_user_form = Story1(root_story1)
+        new_user_form.run()
+    
     def login(self):
         databasecnx = DBConnection()
         valuser = self.entryuser.get()
         valpass = self.entrypass.get()
 
         if databasecnx.is_login_true(valuser, valpass):
-            self.launch_game()
+            self.openstory1()
         else:
             messagebox.showerror('Error', 'Wrong username or password, stay focused!', parent=self.root)
 
         
     def run(self):
         self.root.mainloop()
+
+class Story1:
+    def __init__(self, root):
+        self.root = root
+        self.root.geometry('768x728')
+        self.root.title('Story')
+        self.bgimage = Image.open(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\story1.png')
+        self.bg_photo = ImageTk.PhotoImage(self.bgimage)
+
+        canvas = tk.Canvas(self.root, width=768, height=735)
+        canvas.pack()
+
+        canvas.create_image(0, 0, image=self.bg_photo, anchor='nw')
+        self.validbutton = tk.Button(self.root, text='GO!', bg='purple', fg='gold', font=('Small Fonts', 17,),command=self.launch_game)
+        self.validbutton.place(x=680, y=680)
+
+    def launch_game(self):
+        self.root.withdraw()  # Fermez la fenêtre de connexion
+        # Démarrer le jeu ici
+        run_game()  # Démarrage du jeu (ajustez selon vos besoins)
 
 class NewUserForm:
     def __init__(self, root):

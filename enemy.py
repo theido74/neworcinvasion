@@ -6,7 +6,7 @@ from explose import Explose
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
-        self.velocity = 3
+        self.velocity = 1.8
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\orc1.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.image = pygame.transform.flip(self.image, False, True)
@@ -18,9 +18,9 @@ class Enemy(pygame.sprite.Sprite):
         self.projectileenemy = ProjectilesEnemy(self, game)
         self.allprojectilesenemy = pygame.sprite.Group()
         self.game = game
-        self.health = 100 # Nombre de vies initiales
+        self.health = 350 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
+        self.attack = 5
         self.shoot_cooldown = 1000  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
         self.boss = Boss
@@ -57,13 +57,18 @@ class Enemy(pygame.sprite.Sprite):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -79,23 +84,22 @@ class Enemy(pygame.sprite.Sprite):
     def remove(self):
         self.game.remove(self)
 
-class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
+
+class Peon(Enemy,pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orconaboat1-pixelicious.png')
-        self.image = pygame.transform.scale(self.image, (110, 110))
+        self.velocity = 0.8
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\peon.png')
+        self.image = pygame.transform.scale(self.image, (70, 70))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 300)
-        self.projectileenemyonaboat = ProjectilesEnemyOnaBoat(self, game)
-        self.allprojectilesenemyonaboat = pygame.sprite.Group()
-        self.allenemiesonaboat = pygame.sprite.Group()
+        self.allpeon = pygame.sprite.Group()
         self.game = game
-        self.health = 100 # Nombre de vies initiales
+        self.health = 350 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 2
         self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
@@ -107,7 +111,75 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (460 - self.rect.width))
+            self.position_x = randint(0, (460 - self.rect.width))
+        if self.rect.y < self.position_y:
+            self.rect.y += self.velocity
+        if self.rect.y > self.position_y:
+            self.rect.y -= self.velocity
+        if abs(self.rect.y - self.position_y) < self.velocity:
+            self.position_y = randint(0, 300)
+
+
+    def kill(self):
+        super().kill()
+
+    def updatehealthbar(self, surface):
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
+
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
+    
+    def damage(self, amount):
+        self.health -= amount
+        if self.health <= 0:
+            self.game.music.peon_sound.play()
+            self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
+            # L'ennemi est vaincu, vous pouvez prendre des mesures ici
+            self.kill()
+            self.game.score += 1
+            self.game.enemyremain -=1
+            print('peon killed', self.game.enemyremain)
+
+    def remove(self):
+        self.game.remove(self)
+
+
+class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
+    def __init__(self, game):
+        super().__init__(game)
+        self.velocity = 0.8
+        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orconaboat1-pixelicious.png')
+        self.image = pygame.transform.scale(self.image, (140, 140))
+        self.rect = self.image.get_rect()
+        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.y = 1
+        self.position_x = randint(0, (460 - self.rect.width))
+        self.position_y = randint(0, 300)
+        self.projectileenemyonaboat = ProjectilesEnemyOnaBoat(self, game)
+        self.allprojectilesenemyonaboat = pygame.sprite.Group()
+        self.allenemiesonaboat = pygame.sprite.Group()
+        self.game = game
+        self.health = 400 # Nombre de vies initiales
+        self.maxhealth = self.health
+        self.attack = 2
+        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.last_shot_time = 0  # Temps du dernier tir
+
+    def move(self):
+        if self.rect.x < self.position_x:
+            self.rect.x += self.velocity
+        if self.rect.x > self.position_x:          
+            self.rect.x-= self.velocity
+        if abs(self.rect.x - self.position_x) < self.velocity/2:
+           self.position_x = randint(0, (320 - self.rect.width))
            self.launchprojectilesenemyonaboat() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
@@ -133,13 +205,18 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -159,9 +236,9 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
 class EnemyWarg(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 4
+        self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\warg.png')
-        self.image = pygame.transform.scale(self.image, (120, 110))
+        self.image = pygame.transform.scale(self.image, (120, 120))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -172,10 +249,10 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
         self.allprojectilewargpoison = pygame.sprite.Group()
         self.allwarg = pygame.sprite.Group()
         self.game = game
-        self.health = 300 # Nombre de vies initiales
+        self.health = 350 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 2
-        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.attack = 6
+        self.shoot_cooldown = 500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -184,7 +261,7 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (460 - self.rect.width))
+           self.position_x = randint(0, (450 - self.rect.width))
            self.launchprojectileswargpoison() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
@@ -210,13 +287,18 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -225,7 +307,7 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
-            self.game.score += 7
+            self.game.score += 9
             self.game.enemyremain -=1
             print('warg killed', self.game.enemyremain)
 
@@ -236,9 +318,9 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
 class EnemyDwarf(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 4
+        self.velocity = 1.2
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\nain avec hache.png')
-        self.image = pygame.transform.scale(self.image, (120, 110))
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -249,10 +331,10 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
         self.allprojectiledwarf = pygame.sprite.Group()
         self.alldwarf = pygame.sprite.Group()
         self.game = game
-        self.health = 300 # Nombre de vies initiales
+        self.health = 600 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 2
-        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.attack = 4
+        self.shoot_cooldown = 1800  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -261,14 +343,14 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (460 - self.rect.width))
+           self.position_x = randint(0, (350 - self.rect.width))
            self.launchprojectilesdwarf() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 550)
+           self.position_y = randint(0, 300)
         self.check_shoot()
 
     def check_shoot(self):
@@ -287,13 +369,18 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -302,7 +389,7 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
-            self.game.score += 7
+            self.game.score += 12
             self.game.enemyremain -=1
             print('dwarf killed', self.game.enemyremain)
 
@@ -313,7 +400,7 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
 class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 4
+        self.velocity = 2.2
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\gobelinarcher.png')
         self.image = pygame.transform.scale(self.image, (120, 110))
         self.image = pygame.transform.flip(self.image, False, True)
@@ -326,10 +413,10 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
         self.allprojectilegobelinarcher = pygame.sprite.Group()
         self.allgobelinarcher = pygame.sprite.Group()
         self.game = game
-        self.health = 300 # Nombre de vies initiales
+        self.health = 200 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 2
-        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.attack = 1
+        self.shoot_cooldown = 300  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -339,7 +426,7 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
            self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesdwarf() 
+           self.launchprojectilesgobelinarcher() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
@@ -357,20 +444,25 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
     def shoot(self):
         self.allprojectilegobelinarcher.add(ProjectilesGobelinArcher(self, self.game))        
     
-    def launchprojectilesdwarf(self):
+    def launchprojectilesgobelinarcher(self):
         self.allprojectilegobelinarcher.add(ProjectilesGobelinArcher(self, self.game))
 
     def kill(self):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -441,13 +533,18 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
         super().kill()
 
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
     
     def damage(self, amount):
         self.health -= amount
@@ -467,38 +564,40 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
 class Boss(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 1
+        self.velocity = 0.6
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orcboss.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (130, 130))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
-        self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_x = randint(0, (250 - self.rect.width))
+        self.position_y = randint(0, 150)
         self.projectileboss = ProjectilesBoss(self, game)
         self.allprojectilesboss = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 700 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
-        self.shoot_cooldown = 1000  # Temps en millisecondes entre chaque tir
+        self.attack = 5
+        self.shoot_cooldown = 2000  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
+        if self.rect.y > 150:
+            self.rect.y = 150
         if self.rect.x < self.position_x:
-            self.rect.x += self.velocity
+            self.rect.x += self.velocity 
         if self.rect.x > self.position_x:          
-            self.rect.x-= self.velocity
-        if abs(self.rect.x - self.position_x) < self.velocity/2:
+            self.rect.x-= self.velocity 
+        if abs(self.rect.x - self.position_x) < self.velocity:
            self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesboss() 
+           self.launchprojectilesenemy() 
         if self.rect.y < self.position_y:
-            self.rect.y += self.velocity
+            self.rect.y += self.velocity 
         if self.rect.y > self.position_y:
-            self.rect.y -= self.velocity
-        if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 250)
+            self.rect.y -= self.velocity 
+        if abs(self.rect.y - self.position_y) < self.velocity/2:
+           self.position_y = randint(0, 150)
         self.check_shoot()
 
     def damage(self, amount):
@@ -528,62 +627,72 @@ class Boss(Enemy, pygame.sprite.Sprite):
         super().kill()
         
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
 
 
 class BossBoat(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 2
+        self.velocity = 0.6
         self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\Bigboatorc.png')
-        self.image = pygame.transform.scale(self.image, (90, 90))
+        self.image = pygame.transform.scale(self.image, (180, 180))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_y = randint(0, 250)
         self.projectilebossboat = ProjectilesBossBoat(self, game)
         self.allprojectilesbossboat = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 2500 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
-        self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
+        self.attack = 10
+        self.shoot_cooldown = 2000  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
+        if self.rect.y > 150:
+            self.rect.y = 150
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
            self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesboss() 
+           self.launchprojectilesenemy() 
         if self.rect.y < self.position_y:
-            self.rect.y += self.velocity
+            self.rect.y += self.velocity/2
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 250)
+           self.position_y = randint(0, 300)
         self.check_shoot()
 
-    def damage(self, amount):
-        self.health -= amount
-        if self.health <= 0:
-            self.game.music.boatboss_sound.play()
-            self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
-            # L'ennemi est vaincu, vous pouvez prendre des mesures ici
-            self.kill()
-            self.game.score += 25 
-            self.game.enemyremain -=1
-            print('boss boat killed', self.game.enemyremain)
+    def updatehealthbar(self, surface):
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
+
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
 
     def launchprojectilesboss(self):
         self.allprojectilesbossboat.add(ProjectilesBossBoat(self, self.game))
@@ -601,35 +710,40 @@ class BossBoat(Enemy, pygame.sprite.Sprite):
         super().kill()
         
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
 
 
 
 class BossWarg(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 2
+        self.velocity = 0.6
         self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orcwarg.png')
-        self.image = pygame.transform.scale(self.image, (120, 120))
+        self.image = pygame.transform.scale(self.image, (180, 180))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_y = randint(0, 500)
         self.projectilebosswarg = ProjectilesBossWarg(self, game)
         self.allprojectilesbosswarg = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 1000 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
-        self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
+        self.attack = 30
+        self.shoot_cooldown = 2000  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -645,7 +759,7 @@ class BossWarg(Enemy, pygame.sprite.Sprite):
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 250)
+           self.position_y = randint(0, 550)
         self.check_shoot()
 
     def damage(self, amount):
@@ -675,20 +789,25 @@ class BossWarg(Enemy, pygame.sprite.Sprite):
         super().kill()
         
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
 
 
 
 class BossDwarf(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 2
+        self.velocity = 0.6
         self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\naincyborg avec hache.png')
         self.image = pygame.transform.scale(self.image, (120, 120))
         self.rect = self.image.get_rect()
@@ -702,7 +821,7 @@ class BossDwarf(Enemy, pygame.sprite.Sprite):
         self.game = game
         self.health = 350 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
+        self.attack = 20
         self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
@@ -749,13 +868,18 @@ class BossDwarf(Enemy, pygame.sprite.Sprite):
         super().kill()
         
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
 
 class BossBalrog(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
@@ -772,9 +896,9 @@ class BossBalrog(Enemy, pygame.sprite.Sprite):
         self.allprojectilesbossbalrog = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 2000 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 1
+        self.attack = 40
         self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
@@ -821,10 +945,15 @@ class BossBalrog(Enemy, pygame.sprite.Sprite):
         super().kill()
         
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x + 5, self.rect.y -10, self.health, 5]
-        bgbarposition = [self.rect.x + 5, self.rect.y - 10, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)

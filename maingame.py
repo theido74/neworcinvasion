@@ -1,7 +1,8 @@
 import pygame
 from player import Player
-from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg, EnemyDwarf, BossDwarf, EnemyGobelinArcher, EnemyGobelinMassue, BossBalrog
+from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg, EnemyDwarf, BossDwarf, EnemyGobelinArcher, EnemyGobelinMassue, BossBalrog, Peon
 from sound import Sound
+from bonus import BonusAttack,GoodElf
 
 
 class Game:
@@ -9,7 +10,10 @@ class Game:
         self.nameneed = False
         self.isplaying = False
         self.player = Player(self)
+        self.goodelf = GoodElf(self)
+        self.bonusattack = BonusAttack(self)
         self.enemy = Enemy(self)
+        self.peon = Peon(self)
         self.enemyonaboat = EnemyOnBoat(self)
         self.warg = EnemyWarg(self)
         self.dwarf = EnemyDwarf(self)
@@ -24,7 +28,10 @@ class Game:
         self.allplayers = pygame.sprite.Group()
         self.allplayers.add(self.player)
         self.pressed = {}
+        self.allgoodelf = pygame.sprite.Group()
+        self.allbonusattack = pygame.sprite.Group()
         self.allenemies = pygame.sprite.Group()
+        self.allpeon = pygame.sprite.Group()
         self.allenemiesonaboat = pygame.sprite.Group()
         self.allwarg = pygame.sprite.Group()
         self.alldwarf = pygame.sprite.Group()
@@ -48,51 +55,82 @@ class Game:
         self.bossspawned = False
         self.firstspawn = False
         self.secondspawn = False
+        self.bonusattackspawn = False
+        self.goodelfspawn = False
         self.enemyremain = 0
+        self.bonusremain = 0
 
     def start(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(5):   
+        for _ in range(4):   
             self.spawnenemy()
             print(self.enemyremain)
+        for _ in range(8):   
+            self.spawnpeon()
+            print(self.enemyremain)
+        self.spawngoodelf()
+        
     def startsecondspawn(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True
         for _ in range(8):
             self.spawnenemy()
             print(self.enemyremain)
         self.secondspawn = True
+        for _ in range(8):
+            self.spawnpeon()
+            print(self.enemyremain)
+        self.secondspawn = True
             
     def startlvl1(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(5):   
+        for _ in range(7):   
             self.spawnenemyboat()
+            print(self.enemyremain)
+        for _ in range(9):   
+            self.spawnpeon()
             print(self.enemyremain)
         self.firstspawn = True
     def startlvl1second(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True 
         for _ in range(8):   
             self.spawnenemyboat()
         self.secondspawn = True
+        for _ in range(3):   
+            self.spawnenemy()
+        self.secondspawn = True
+        for _ in range(3):   
+            self.spawnpeon()
+        self.secondspawn = True
 
     def startlvl2(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True
         for _ in range(5):
             self.spawnwarg()
             print(self.enemyremain)
         self.firstspawn = True
     def startlvl2second(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True 
         for _ in range(8):   
             self.spawnwarg()
         self.secondspawn = True
 
     def startlvl3(self):
+        self.bosswarg.allprojectilesbosswarg.empty()
+        self.player.allprojectiles.empty()
         self.isplaying = True
         for _ in range(5):
             self.spawndawrf()
             print(self.enemyremain)
         self.firstspawn = True
     def startlvl3second(self):
+        self.player.allprojectiles.empty()
+        self.dwarf.allprojectiledwarf.empty()
         self.isplaying = True
         for _ in range(5):   
             self.spawnenemy()
@@ -103,6 +141,7 @@ class Game:
         self.secondspawn = True
 
     def startlvl4(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True
         for _ in range(5):
             self.spwangobelinarcher()
@@ -113,6 +152,7 @@ class Game:
             print(self.enemyremain)
 
     def startlvl4second(self):
+        self.player.allprojectiles.empty()
         self.isplaying = True
         for _ in range(3):
             self.spwangobelinarcher()
@@ -126,24 +166,36 @@ class Game:
 
 
     def startboss(self):
+        self.player.allprojectiles.empty()
         if self.enemyremain == 0:
             self.spawnboss()
             self.bossspawned = True
+            for _ in range(4):
+                self.spawnpeon()
+                self.spawnenemy()
+
     def startbossboat(self):
+        self.player.allprojectiles.empty()
         if self.enemyremain == 0:
             self.spawnbossboat()
             self.bossspawned = True
+            for _ in range(4):
+                self.spawnenemyboat()
+                self.spawnenemyboat()
     def startbosswarg(self):
+        self.player.allprojectiles.empty()
         if self.enemyremain == 0:
             self.spawnbosswarg()
             self.bossspawned = True
     def startbossdwarf(self):
+        self.player.allprojectiles.empty()
         if self.enemyremain == 0:
             for _ in range(2):
                 self.spawnbossdwarf()
                 self.bossspawned = True
 
     def startbossbalrog(self):
+        self.player.allprojectiles.empty()
         if self.enemyremain == 0:
             self.spawnbossbalrog()
             self.bossspawned = True
@@ -188,6 +240,21 @@ class Game:
             self.player.updatehealthbar(screen)
             if player.health <= 0:
                 self.isplaying = False
+        
+        for bonusattack in self.allbonusattack:
+            bonusattack.move()
+        self.allbonusattack.draw(screen)
+        
+        for goodelf in self.allgoodelf:
+            goodelf.move()
+            goodelf.updatehealthbar(screen)
+        self.allgoodelf.draw(screen)
+
+        for projectile in self.goodelf.allprojectilesgoodelf:
+            projectile.move()
+            if self.goodelf.health <= 0:
+                self.allgoodelf.remove(self.goodelf)
+        self.goodelf.allprojectilesgoodelf.draw(screen)
 
         for enemy in self.allenemies:
             enemy.move()
@@ -212,6 +279,11 @@ class Game:
             boss.move()
             boss.updatehealthbar(screen)
         self.allboss.draw(screen)
+
+        for peon in self.allpeon:
+            peon.move()
+            peon.updatehealthbar(screen)
+        self.allpeon.draw(screen)
 
         for enemyinboat in self.allenemiesonaboat:
             enemyinboat.move()
@@ -294,13 +366,36 @@ class Game:
             projectile.move()
         self.bossbalrog.allprojectilesbossbalrog.draw(screen)
 
+        for projectile in self.player.allprojectiles:
+            self.player.allprojectiles.update()
+
         pygame.display.flip()#maj ecran
 
     
+    def spawnbonusattack(self):
+        self.bonusattack in self.allbonusattack
+        self.bonusattack = BonusAttack(self)
+        self.allbonusattack.add(self.bonusattack)
+        self.bonusremain += 1
+        self.bonusattackspawn = True
+
+    def spawngoodelf(self):
+        self.goodelf in self.allgoodelf
+        self.goodelf = GoodElf(self)
+        self.allgoodelf.add(self.goodelf)
+        self.bonusremain += 1
+        self.goodelfspawn = True
+
     def spawnenemy(self):
         self.enemy in self.allenemies
         self.enemy = Enemy(self)
         self.allenemies.add(self.enemy)
+        self.enemyremain += 1
+
+    def spawnpeon(self):
+        self.enemy in self.allpeon
+        self.peon = Peon(self)
+        self.allpeon.add(self.peon)
         self.enemyremain += 1
 
     def spawnenemyboat(self):

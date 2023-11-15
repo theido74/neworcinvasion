@@ -1,6 +1,6 @@
 import pygame
 from maingame import Game
-from text import Text, show_text_window, wait_for_key_press
+from text import show_text_window, wait_for_key_press
 class Level:
     
     def __init__(self, level_number, background_path):
@@ -13,7 +13,6 @@ class Level:
         self.showing_message = False
 
 
-
     def run_level(self, screen, clock):
         level_completed = False
         while self.running:
@@ -21,7 +20,7 @@ class Level:
 
             self.y_background += 0.7
             x_background = int(-0.18 * self.game.player.rect.x)
-            if self.y_background < 728:
+            if self.y_background < 728: 
                 screen.blit(self.background, (x_background, int(self.y_background)))  # Arrière-plan
                 screen.blit(self.background, (x_background, int(self.y_background - 728)))
             else:
@@ -30,7 +29,7 @@ class Level:
 
             if self.game.isplaying:
                 self.game.updatescore(screen)
-            
+
             else:
                 screen.blit(self.banner, (50, 150))
                 pygame.display.flip()
@@ -54,14 +53,14 @@ class Level:
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 0:
                 self.game.startsecondspawn()
-                self.game.enemy.projectileenemy.remove()
-                self.game.player.allprojectiles.remove()
+                self.game.player.allprojectiles.empty()
 
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 0:
-                self.game.startboss()   
-                self.game.allprojectiles.remove()
-                self.game.allprojectilesenemy.remove()
+                self.game.startboss()
+   
+                self.game.player.allprojectiles.empty()
+                self.game.enemy.allprojectilesenemy.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 0:
                 self.level_number +=1
@@ -71,7 +70,7 @@ class Level:
                 show_text_window(screen, "Level completed! Press sur 'S' to continue")
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
-                self.game.allprojectilesboss.remove()
+                self.game.boss.allprojectilesboss.empty()
                 print('level',self.level_number)
             
             if self.level_number == 1:
@@ -81,18 +80,18 @@ class Level:
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 1:          
                 self.game.startlvl1()
                 print('startboat1')
-                self.game.allprojectiles.remove()
+                self.game.allprojectiles.empty()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 1:
                 self.game.startlvl1second()
-                self.game.allprojectiles.remove()
-                self.game.allprojectilesenemyonaboat.remove()
+                self.game.allprojectiles.empty()
+                self.game.allprojectilesenemyonaboat.empty()
                 print('start boat 2nd')
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 1:
                 self.game.startbossboat()
-                self.game.allprojectilesenemyonaboat.remove()
-                self.game.allprojectiles.remove()
+                self.game.enemyonaboat.allprojectilesenemyonaboat.empty()
+                self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 1:
                 self.level_number +=1
@@ -103,29 +102,27 @@ class Level:
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
                 self.game.firstspawn = False
+                self.game.bossboat.allprojectilesbossboat.empty()
                 print('level',self.level_number)
 
             
             if self.level_number == 2:
                 self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond6.png').convert_alpha()
                 level_completed = False
-                self.game.allprojectiles.remove()
-                self.game.allprojectilesbossboat.remove()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 2:          
                 self.game.startlvl2()
                 print('startwarg1')
-                self.game.allprojectiles.remove()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 2:
                 self.game.startlvl2second()
-                self.game.allprojectiles.remove()
-                self.game.allprojectileswargpoison.remove()
+                self.game.player.allprojectiles.empty()
+                self.game.warg.allprojectilewargpoison.empty()
             
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 2:
                 self.game.startbosswarg()
-                self.game.warg.allprojectilewargpoison.remove()
-                self.game.player.allprojectiles.remove()
+                self.game.warg.allprojectilewargpoison.empty()
+                self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 2:
                 self.level_number +=1
@@ -141,28 +138,24 @@ class Level:
             if self.level_number == 3:
                 self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondnain1.png').convert_alpha()
                 level_completed = False
-                self.game.allprojectilesbosswarg.remove()
-                self.game.allprojectiles.remove()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 3:          
                 self.game.startlvl3()
                 print('startdwarf1')
-                self.game.allprojectilesbosswarg.remove()
-                self.game.allprojectiles.remove()            
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 3:
                 self.game.startlvl3second()
-                self.game.allprojectiles.remove()
-                self.game.allprojectileswargpoison.remove()
+                self.game.player.allprojectiles.empty()
+                self.game.warg.allprojectilewargpoison.empty()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 3:
                 self.game.startbossdwarf()
-                self.game.allprojectileswargpoison.remove()
-                self.game.allprojectiles.remove()
+                self.game.warg.allprojectilewargpoison.empty()
+                self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 3:
                 self.level_number +=1
-                level_completed = True
+                level_completed = True   
                 self.game.nextlevel()
                 self.showing_message = True
                 show_text_window(screen, "Level completed! Press sur 'S' to continue")
@@ -170,23 +163,23 @@ class Level:
                 self.showing_message = False
                 self.game.firstspawn = False
                 print('level',self.level_number)
+                self.game.bossdwarf.allprojectilesbossdwarf.empty()
+                self.game.player.allprojectiles.empty()
 
             if self.level_number == 4:
                 self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondnain2.png').convert_alpha()
                 level_completed = False
-                self.game.allprojectilesbossdwarf.remove()
-                self.game.allprojectiles.remove()
+
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 4:          
                 self.game.startlvl4()
                 print('startgobelin1')
-                self.game.allprojectilesbosswarg.remove()
-                self.game.allprojectiles.remove()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 4:
                 self.game.startlvl4second()
-                self.game.allprojectiles.remove()
-                self.game.allprojectileswargpoison.remove()  
+                self.game.player.allprojectiles.empty()
+                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilegobelinmassue.empty()  
 
             if self.game.isplaying and self.game.bossspawned == False and self.game.enemyremain == 0 and not level_completed and self.level_number == 4:
                 self.level_number +=1
@@ -197,19 +190,19 @@ class Level:
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
                 self.game.firstspawn = False
-                print('level',self.level_number) 
+                print('level',self.level_number)
+                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilegobelinmassue.empty() 
 
             if self.level_number == 5:
                 self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondbalrog.png').convert_alpha()
-                level_completed = False
-                self.game.allprojectilesbossdwarf.remove()
-                self.game.allprojectiles.remove()  
+                level_completed = False  
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 5:          
                 self.game.startbossbalrog()
                 print('startbalrog')
-                self.game.allprojectilesbosswarg.remove()
-                self.game.allprojectiles.remove()  
+                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilegobelinmassue.empty()  
             
 
             if self.game.pressed.get(pygame.K_RIGHT) and self.game.player.rect.x + self.game.player.rect.width < screen.get_width():

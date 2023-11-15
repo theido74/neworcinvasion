@@ -16,7 +16,7 @@ class Sound:
         self.dwarfboss_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\manx27s-cry-122258.mp3')
         self.gobelin_sound = pygame.mixer.Sound(r'c:\Users\ponce\Desktop\python\23.10.23.space\son\spade-hacking-sound-with-gore-effects-96909.mp3')
         self.balrog_sound = pygame.mixer.Sound(r'c:\Users\ponce\Desktop\python\23.10.23.space\son\forest-monster-scream1-104247.mp3')
-
+        self.peon_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\die-47695.mp3')
         self.shoot_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\beam-8-43831.mp3')
 
         self.soundvolume()
@@ -33,3 +33,4 @@ class Sound:
         self.dwarf_sound.set_volume(0.15)
         self.gobelin_sound.set_volume(0.15)
         self.balrog_sound.set_volume(0.15)
+        self.peon_sound.set_volume(0.05)

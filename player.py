@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
         self.velocity = 5
         self.projectile = Projectiles(self, game)
         self.allprojectiles = pygame.sprite.Group()
-        self.health = 500 # Nombre de vies initiales
+        self.health = 700 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 5
+        self.attack = 3
 
 
     def move_right(self):
@@ -44,13 +44,19 @@ class Player(pygame.sprite.Sprite):
             print('Game Over')
     
     def updatehealthbar(self, surface):
-        barcolor = (71, 209,71)
-        bgbarcolor = (230, 0, 0)
-        barposition = [self.rect.x - 5, self.rect.y + self.rect.height, self.health, 5]
-        bgbarposition = [self.rect.x - 5, self.rect.y + self.rect.height, self.maxhealth, 5]
+        bar_color = (71, 209, 71)
+        bg_bar_color = (230, 0, 0)
+        bar_height = 5
+        max_bar_width = 120
 
-        pygame.draw.rect(surface, bgbarcolor, bgbarposition)
-        pygame.draw.rect(surface, barcolor, barposition)
+        # Calcul de la position et de la largeur pour la barre de santé
+        bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
+        bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
+        bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
+
+        pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
+        pygame.draw.rect(surface, bar_color, bar_position)
+
 
     def damage(self, amount):
         self.health -= amount
