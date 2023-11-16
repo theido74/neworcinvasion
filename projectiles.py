@@ -22,6 +22,11 @@ class Projectiles(pygame.sprite.Sprite):
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
             enemy.damage(self.player.attack)
 
+        bonusattack_hit = pygame.sprite.spritecollide(self, self.game.allbonusattack, False)
+        for bonusattack in bonusattack_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            bonusattack.damage(self.player.attack)
+
         peon_hit = pygame.sprite.spritecollide(self, self.game.allpeon, False)
         for enemy in peon_hit:
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
@@ -130,7 +135,7 @@ class ProjectilesGoodelf(pygame.sprite.Sprite):
 class ProjectilesEnemy(pygame.sprite.Sprite):
     def __init__(self, enemy, game):
         super().__init__()
-        self.velocity = 10
+        self.velocity = 6
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\laserenemy.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (70, 50))
         self.rect = self.image.get_rect()
@@ -155,6 +160,13 @@ class ProjectilesEnemy(pygame.sprite.Sprite):
         for goodelf in hitsbonus:
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             goodelf.damage(self.enemy.attack)
+
+        self.game.enemy.allprojectilesenemy.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.enemy.attack)
 
         self.game.enemy.allprojectilesenemy.add(self)
 
@@ -184,7 +196,22 @@ class ProjectilesEnemyOnaBoat(ProjectilesEnemy):
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             player.damage(self.enemyonaboat.attack)
 
-        self.game.enemyonaboat.allprojectilesenemy.add(self)
+        self.game.enemyonaboat.allprojectilesenemyonaboat.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.enemyonaboat.attack)
+
+        self.game.enemyonaboat.allprojectilesenemyonaboat.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.enemyonaboat.attack)
+
+        self.game.enemyonaboat.allprojectilesenemyonaboat.add(self)
+
 
     def remove(self):
         self.game.allprojectilesenemy.remove(self)
@@ -213,10 +240,23 @@ class ProjectilesWargPoison(ProjectilesEnemy):
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             player.damage(self.warg.attack)
 
-        self.game.warg.allprojectilesenemy.add(self)
+        self.game.warg.allprojectileswargpoison.add(self)
 
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.warg.attack)
+
+        self.game.warg.allprojectileswargpoison.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.warg.attack)
+
+        self.game.warg.allprojectileswargpoison.add(self)
     def remove(self):
-        self.game.allprojectilesenemy.remove(self)
+        self.game.allprojectileswargpoison.remove(self)
 
 
 class ProjectilesDwarf(ProjectilesEnemy):
@@ -241,7 +281,21 @@ class ProjectilesDwarf(ProjectilesEnemy):
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             player.damage(self.dwarf.attack)
 
-        self.game.dwarf.allprojectilesenemy.add(self)
+        self.game.dwarf.allprojectiledwarf.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.dwarf.attack)
+
+        self.game.dwarf.allprojectiledwarf.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.dwarf.attack)
+
+        self.game.dwarf.allprojectiledwarf.add(self)
 
     def remove(self):
         self.game.allprojectilesenemy.remove(self)
@@ -251,7 +305,7 @@ class ProjectilesGobelinArcher(ProjectilesEnemy):
         super().__init__(gobelinarcher, game)
         self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\lasergobelin.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
         self.gobelinarcher = gobelinarcher
         self.game = game
@@ -268,7 +322,21 @@ class ProjectilesGobelinArcher(ProjectilesEnemy):
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             player.damage(self.gobelinarcher.attack)
 
-        self.game.gobelinarcher.allprojectilesenemy.add(self)
+        self.game.gobelinarcher.allprojectilesgobelinarcher.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.gobelinarcher.attack)
+
+        self.game.gobelinarcher.allprojectilesgobelinarcher.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.gobelinarcher.attack)
+
+        self.game.gobelinarcher.allprojectilesgobelinarcher.add(self)
 
     def remove(self):
         self.game.allprojectilesenemy.remove(self)
@@ -279,7 +347,7 @@ class ProjectilesGobelinMassue(ProjectilesEnemy):
         super().__init__(gobelinmassue, game)
         self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\massuegobelin.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (60, 40))
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
         self.gobelinmassue = gobelinmassue
         self.game = game
@@ -296,7 +364,21 @@ class ProjectilesGobelinMassue(ProjectilesEnemy):
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
             player.damage(self.gobelinmassue.attack)
 
-        self.game.gobelinmassue.allprojectilesenemy.add(self)
+        self.game.gobelinmassue.allprojectilesgobelinmassue.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.gobelinmassue.attack)
+
+        self.game.gobelinmassue.allprojectilesgobelinmassue.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.gobelinmassue.attack)
+
+        self.game.gobelinmassue.allprojectilesgobelinmassue.add(self)
 
     def remove(self):
         self.game.allprojectilesenemy.remove(self)
@@ -326,6 +408,23 @@ class ProjectilesBoss (ProjectilesEnemy):
 
         self.game.boss.allprojectilesboss.add(self)
 
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.boss.attack)
+
+        self.game.boss.allprojectilesboss.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.boss.attack)
+
+        self.game.boss.allprojectilesboss.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
     def remove(self):
         self.game.allprojectilesboss.remove(self)
 
@@ -353,6 +452,23 @@ class ProjectilesBossBoat (ProjectilesEnemy):
 
         self.game.bossboat.allprojectilesbossboat.add(self)
 
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.bossboat.attack)
+
+        self.game.bossboat.allprojectilesbossboat.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.bossboat.attack)
+
+        self.game.bossboat.allprojectilesbossboat.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
     def remove(self):
         self.game.allprojectilesbossboat.remove(self)
 
@@ -360,9 +476,9 @@ class ProjectilesBossBoat (ProjectilesEnemy):
 class ProjectilesBossWarg (ProjectilesEnemy):
     def __init__(self, bosswarg, game):
         super().__init__(bosswarg, game)
-        self.velocity = 3
+        self.velocity = 8
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebosswarg.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.image = pygame.transform.scale(self.image, (90, 90))
         self.image = pygame.transform.flip(self.image,False,True)
         self.rect = self.image.get_rect()
         self.bosswarg = bosswarg
@@ -382,6 +498,23 @@ class ProjectilesBossWarg (ProjectilesEnemy):
 
         self.game.bosswarg.allprojectilesbosswarg.add(self)
 
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.bosswarg.attack)
+
+        self.game.bosswarg.allprojectilesbosswarg.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.bosswarg.attack)
+
+        self.game.bosswarg.allprojectilesbosswarg.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
+
     def remove(self):
         self.game.allprojectilesbosswarg.remove(self)
 
@@ -391,7 +524,7 @@ class ProjectilesBossDwarf (ProjectilesEnemy):
         super().__init__(bossdwarf, game)
         self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebossnain.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.image = pygame.transform.scale(self.image, (125, 125))
         self.rect = self.image.get_rect()
         self.bossdwarf = bossdwarf
         self.game = game
@@ -409,6 +542,23 @@ class ProjectilesBossDwarf (ProjectilesEnemy):
             player.damage(self.bossdwarf.attack)
 
         self.game.bossdwarf.allprojectilesbossdwarf.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.bossdwarf.attack)
+
+        self.game.bossdwarf.allprojectilesbossdwarf.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.bossdwarf.attack)
+
+        self.game.bossdwarf.allprojectilesbossdwarf.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
 
     def remove(self):
         self.game.allprojectilesbossdwarf.remove(self)
@@ -433,9 +583,26 @@ class ProjectilesBalrog (ProjectilesEnemy):
         hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
         for player in hits:
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
-            player.damage(self.balrog.attack)
+            player.damage(self.bossbalrog.attack)
 
         self.game.bossbalrog.allprojectilesbossbalrog.add(self)
+
+        hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in hitsbonus:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelf.damage(self.bossbalrog.attack)
+
+        self.game.bossbalrog.allprojectilesbossbalrog.add(self)
+
+        hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in hitsbonusmelee:
+            # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
+            goodelfsword.damage(self.bossbalrog.attack)
+
+        self.game.bossbalrog.allprojectilesbossbalrog.add(self)
+
+    def remove(self):
+        self.game.allprojectilesenemy.remove(self)
 
     def remove(self):
         self.game.allprojectilesbossbalrog.remove(self)

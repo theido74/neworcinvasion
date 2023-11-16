@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
         self.velocity = 5
         self.projectile = Projectiles(self, game)
         self.allprojectiles = pygame.sprite.Group()
-        self.health = 700 # Nombre de vies initiales
+        self.health = 850 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 3
+        self.attack = 6
 
 
     def move_right(self):

@@ -18,6 +18,8 @@ class Sound:
         self.balrog_sound = pygame.mixer.Sound(r'c:\Users\ponce\Desktop\python\23.10.23.space\son\forest-monster-scream1-104247.mp3')
         self.peon_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\die-47695.mp3')
         self.shoot_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\beam-8-43831.mp3')
+        self.bonusattack_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\fantasy_ui_button_6-102219.mp3')
+        self.goodelf_sound = pygame.mixer.Sound(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\vmx-molly-good-bye-93235.mp3')
 
         self.soundvolume()
 

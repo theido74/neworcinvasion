@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2
 from random import randint
 from projectiles import ProjectilesEnemy, ProjectilesBoss, ProjectilesEnemyOnaBoat, ProjectilesBossBoat, ProjectilesWargPoison, ProjectilesBossWarg,ProjectilesDwarf, ProjectilesBossDwarf,ProjectilesGobelinArcher, ProjectilesGobelinMassue, ProjectilesBalrog
 from explose import Explose
@@ -11,14 +12,14 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x = randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 300)
         self.projectileenemy = ProjectilesEnemy(self, game)
         self.allprojectilesenemy = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 275 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 5
         self.shoot_cooldown = 1000  # Temps en millisecondes entre chaque tir
@@ -77,48 +78,51 @@ class Enemy(pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
+            self.remove()
             self.game.score += 15
             self.game.enemyremain -=1
-            print(self.game.enemyremain)
+            print('enemy killed-enemyremain ',self.game.enemyremain)
        
-    def remove(self):
-        self.game.remove(self)
+  
 
 
 class Peon(Enemy,pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 0.8
+        self.velocity = 3
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\peon.png')
         self.image = pygame.transform.scale(self.image, (70, 70))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x = randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_y = randint(0, 700)
         self.allpeon = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 100 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 2
         self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
-        if self.rect.x < self.position_x:
-            self.rect.x += self.velocity
-        if self.rect.x > self.position_x:          
-            self.rect.x-= self.velocity
-        if abs(self.rect.x - self.position_x) < self.velocity/2:
-            self.position_x = randint(0, (460 - self.rect.width))
-        if self.rect.y < self.position_y:
-            self.rect.y += self.velocity
-        if self.rect.y > self.position_y:
-            self.rect.y -= self.velocity
-        if abs(self.rect.y - self.position_y) < self.velocity:
-            self.position_y = randint(0, 300)
+        # Vérifier la proximité du joueur
+        distance_to_player = pygame.math.Vector2(self.game.player.rect.x - self.rect.x, self.game.player.rect.y - self.rect.y).length()
+        if distance_to_player < 50:  # Ajustez la distance d'attaque au besoin
+            self.hit()
+        # Calculer le vecteur de direction vers le joueur
+        direction = Vector2(self.game.player.rect.x - self.rect.x, self.game.player.rect.y - self.rect.y).normalize()
 
+        # Déplacer l'ennemi dans la direction du joueur
+        self.rect.x += direction.x * self.velocity
+        self.rect.y += direction.y * self.velocity
+
+    def hit(self):
+        if self.game.player.health > 1:
+            self.game.player.damage(self.attack)
+        if self.game.player.health > 1:
+            self.game.goodelf.damage(self.attack)
 
     def kill(self):
         super().kill()
@@ -144,12 +148,12 @@ class Peon(Enemy,pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
+            self.remove()
             self.game.score += 1
             self.game.enemyremain -=1
             print('peon killed', self.game.enemyremain)
 
-    def remove(self):
-        self.game.remove(self)
+
 
 
 class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
@@ -159,7 +163,7 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orconaboat1-pixelicious.png')
         self.image = pygame.transform.scale(self.image, (140, 140))
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x = randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 300)
@@ -170,7 +174,7 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         self.health = 400 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 2
-        self.shoot_cooldown = 1300  # Temps en millisecondes entre chaque tir
+        self.shoot_cooldown = 1600  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -179,7 +183,7 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (320 - self.rect.width))
+           self.position_x = randint(0, (460 - self.rect.width/2))
            self.launchprojectilesenemyonaboat() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
@@ -241,35 +245,48 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (120, 120))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x = randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 300)
-        self.projectilewargpoison = ProjectilesWargPoison(self, game)
-        self.allprojectilewargpoison = pygame.sprite.Group()
+        self.projectileswargpoison = ProjectilesWargPoison(self, game)
+        self.allprojectileswargpoison = pygame.sprite.Group()
         self.allwarg = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 500 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 6
         self.shoot_cooldown = 500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
+        player_hit = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in player_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            player.damage(self.attack)
+        goodelf_hit = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in goodelf_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelf.damage(self.attack)
+        goodelfsword_hit = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in goodelfsword_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelfsword.damage(self.attack)
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (450 - self.rect.width))
+           self.position_x = randint(0, (460 - self.rect.width))
            self.launchprojectileswargpoison() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 550)
+           self.position_y = randint(0, 500)
         self.check_shoot()
+
 
     def check_shoot(self):
         current_time = pygame.time.get_ticks()  # Obtenez le temps actuel en millisecondes
@@ -278,10 +295,10 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
             self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
 
     def shoot(self):
-        self.allprojectilewargpoison.add(ProjectilesWargPoison(self, self.game))        
+        self.allprojectileswargpoison.add(ProjectilesWargPoison(self, self.game))        
     
     def launchprojectileswargpoison(self):
-        self.allprojectilewargpoison.add(ProjectilesWargPoison(self, self.game))
+        self.allprojectileswargpoison.add(ProjectilesWargPoison(self, self.game))
 
     def kill(self):
         super().kill()
@@ -323,7 +340,7 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x =  randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 300)
@@ -400,15 +417,15 @@ class EnemyDwarf(Enemy, pygame.sprite.Sprite):
 class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 2.2
+        self.velocity = 1.5
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\gobelinarcher.png')
-        self.image = pygame.transform.scale(self.image, (120, 110))
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
-        self.rect.x = 200- int(self.rect.width /2 )
+        self.rect.x =  randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_y = randint(0, 200)
         self.projectilegobelinarcher = ProjectilesGobelinArcher(self, game)
         self.allprojectilegobelinarcher = pygame.sprite.Group()
         self.allgobelinarcher = pygame.sprite.Group()
@@ -432,7 +449,7 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 550)
+           self.position_y = randint(0, 200)
         self.check_shoot()
 
     def check_shoot(self):
@@ -484,7 +501,7 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
         super().__init__(game)
         self.velocity = 4
         self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\gobelinmassue.png')
-        self.image = pygame.transform.scale(self.image, (120, 110))
+        self.image = pygame.transform.scale(self.image, (90, 90))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -502,20 +519,33 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
+        player_hit = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in player_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            player.damage(self.attack)
+        goodelf_hit = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in goodelf_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelf.damage(self.attack)
+        goodelfsword_hit = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in goodelfsword_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelfsword.damage(self.attack)
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
            self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesgobelinmassue() 
+           self.launchprojectilesboss() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 550)
+           self.position_y = randint(0, 500)
         self.check_shoot()
+
 
     def check_shoot(self):
         current_time = pygame.time.get_ticks()  # Obtenez le temps actuel en millisecondes
@@ -607,6 +637,7 @@ class Boss(Enemy, pygame.sprite.Sprite):
             self.game.allexploses.add(Explose(self.rect.x, self.rect.y))
             # L'ennemi est vaincu, vous pouvez prendre des mesures ici
             self.kill()
+            self.remove()
             self.game.score += 25 
             self.game.enemyremain -=1
             print('boss killed', self.game.enemyremain)
@@ -735,32 +766,45 @@ class BossWarg(Enemy, pygame.sprite.Sprite):
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 500)
+        self.position_y = randint(0, 450)
         self.projectilebosswarg = ProjectilesBossWarg(self, game)
         self.allprojectilesbosswarg = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 1000 # Nombre de vies initiales
+        self.health = 2200 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 30
-        self.shoot_cooldown = 2000  # Temps en millisecondes entre chaque tir
+        self.attack = 8
+        self.shoot_cooldown = 3500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
+        player_hit = pygame.sprite.spritecollide(self, self.game.allplayers, False)
+        for player in player_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            player.damage(self.attack)
+        goodelf_hit = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
+        for goodelf in goodelf_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelf.damage(self.attack)
+        goodelfsword_hit = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
+        for goodelfsword in goodelfsword_hit:
+            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
+            goodelfsword.damage(self.attack)
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (460 - self.rect.width))
+           self.position_x = randint(0, (450 - self.rect.width))
            self.launchprojectilesboss() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 550)
+           self.position_y = randint(0, 450)
         self.check_shoot()
+
 
     def damage(self, amount):
         self.health -= amount
