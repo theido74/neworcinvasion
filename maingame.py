@@ -3,7 +3,8 @@ from player import Player
 from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg, EnemyDwarf, BossDwarf, EnemyGobelinArcher, EnemyGobelinMassue, BossBalrog, Peon
 from sound import Sound
 from bonus import BonusAttack,GoodElf, BonusMelee, GoodElfSword
-
+from databaseconnection import DBConnection
+from classesql import User
 
 class Game:
     def __init__(self):
@@ -63,18 +64,23 @@ class Game:
         self.goodelfspawn = False
         self.enemyremain = 0
         self.bonusremain = 0
+        self.db = DBConnection()
+        self.userdata = self.db.finduserdic()
+        print('GAME',self.userdata)#ok
+
+
+
 
     def start(self):
         self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(8):   
+        for _ in range(5):   
             self.spawnenemy()
             print(self.enemyremain)
-        for _ in range(8):   
+        for _ in range(5):   
             self.spawnpeon()
             print(self.enemyremain)
-        self.spawnbonusmelee()
-        self.spawnbonusattack()
+
 
     def startsecondspawn(self):
         self.player.allprojectiles.empty()
@@ -221,6 +227,19 @@ class Game:
         self.allprojectiles.remove()
 
     def gameover (self):
+        for i in self.userdata.values():
+            print('GAME-gameover',i)
+
+        print('userdata',self.userdata.values())#OK
+        if 'username' in self.userdata:
+            username_value = self.userdata['username']
+            print('GAME GAME OVER username_value', username_value)
+            print('GAME GAME OVERself.score', self.score)
+
+            self.db.savehighscore(username_value, self.score)
+        else:
+            print("Erreur : clé 'username' non trouvée dans self.userdata.")
+
         self.level_number = 0
         self.score = 0
         self.allenemies = pygame.sprite.Group()
@@ -234,7 +253,6 @@ class Game:
         scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
         screen.blit(scoretext, (20,20))
         screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
-
     
 
         for explose in self.allexploses:
@@ -499,5 +517,8 @@ class Game:
         print('boss warg', self.enemyremain)
 
 
+
+    
+                
 
 

@@ -54,11 +54,16 @@ class Login:
         valpass = self.entrypass.get()
 
         if databasecnx.is_login_true(valuser, valpass):
-            self.openstory1()
+            self.launch_game()
         else:
             messagebox.showerror('Error', 'Wrong username or password, stay focused!', parent=self.root)
 
-        
+
+    def launch_game(self):
+        self.root.withdraw()  # Fermez la fenêtre de connexion
+        # Démarrer le jeu ici
+        run_game()  # Démarrage du jeu (ajustez selon vos besoins)
+
     def run(self):
         self.root.mainloop()
 
@@ -75,8 +80,7 @@ class Story1:
 
         canvas.create_image(0, 0, image=self.bg_photo, anchor='nw')
         self.validbutton = tk.Button(self.root, text='GO!', bg='purple', fg='gold', font=('Small Fonts', 17,),command=self.launch_game)
-        self.validbutton.place(x=680, y=680)
-
+        self.validbutton.pack()
     def launch_game(self):
         self.root.withdraw()  # Fermez la fenêtre de connexion
         # Démarrer le jeu ici

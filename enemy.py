@@ -123,6 +123,9 @@ class Peon(Enemy,pygame.sprite.Sprite):
             self.game.player.damage(self.attack)
         if self.game.player.health > 1:
             self.game.goodelf.damage(self.attack)
+        if self.game.player.health > 1:
+            self.game.goodelfsword.damage(self.attack)
+        
 
     def kill(self):
         super().kill()

@@ -1,6 +1,7 @@
 import pygame
 from maingame import Game
 from text import show_text_window, wait_for_key_press
+from databaseconnection import DBConnection
 class Level:
     
     def __init__(self, level_number, background_path):
@@ -8,6 +9,7 @@ class Level:
         self.background = pygame.image.load(background_path).convert_alpha()
         self.banner = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\presstoplay.png').convert_alpha()
         self.game = Game()
+        self.db = DBConnection()
         self.y_background = 0
         self.running = True
         self.showing_message = False
@@ -149,11 +151,11 @@ class Level:
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 3:
                 self.game.startlvl3second()
                 self.game.player.allprojectiles.empty()
-                self.game.warg.allprojectilewargpoison.empty()
+                self.game.warg.allprojectileswargpoison.empty()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 3:
                 self.game.startbossdwarf()
-                self.game.warg.allprojectilewargpoison.empty()
+                self.game.warg.allprojectileswargpoison.empty()
                 self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 3:
@@ -227,14 +229,13 @@ def run_game():
     screen = pygame.display.set_mode((432, 728))
 
     # Création des niveaux
-    level_0 = Level(0, r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond1.png')
+    level_0 = Level(0, r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond1.png')
 
-    current_level = level_0  # Commencer par le niveau 0
 
     # Boucle principale du jeu
     running = True
     while running:
-        current_level.run_level(screen, clock)
+        level_0.run_level(screen, clock)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -243,4 +244,3 @@ def run_game():
         pygame.display.update()
 
     pygame.quit()
-run_game()
