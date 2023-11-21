@@ -1,7 +1,7 @@
 import pygame
 from maingame import Game
 from text import show_text_window, wait_for_key_press
-from databaseconnection import DBConnection
+#from databaseconnection import DBConnection
 class Level:
     
     def __init__(self, level_number, background_path):
@@ -9,7 +9,7 @@ class Level:
         self.background = pygame.image.load(background_path).convert_alpha()
         self.banner = pygame.image.load(r'image\presstoplay.png').convert_alpha()
         self.game = Game()
-        self.db = DBConnection()
+        #self.db = DBConnection()
         self.y_background = 0
         self.running = True
         self.showing_message = False
@@ -245,3 +245,6 @@ def run_game():
         pygame.display.update()
 
     pygame.quit()
+
+run_game()
+
