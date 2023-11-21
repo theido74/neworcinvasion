@@ -3,7 +3,7 @@ import pygame
 class Sound:
 
     def __init__(self):
-        self.music = pygame.mixer.music.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\son\Lord of the rings ~ Concerning Hobbits 16-bit [2mJPGvsuHUQ].mp3')
+        self.music = pygame.mixer.music.load(r'son\Lord of the rings ~ Concerning Hobbits 16-bit [2mJPGvsuHUQ].mp3')
         self.music_volume = pygame.mixer.music.set_volume(0.23)
         self.music_play = pygame.mixer.music.play(loops=-1)
         self.explose_sound = pygame.mixer.Sound(r'son\zombie-death-2-95167.mp3')
