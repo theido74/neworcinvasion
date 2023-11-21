@@ -1,0 +1,27 @@
+--- neworcinvasion_git/levellogic.py	2023-11-21 13:04:11.577355377 +0100
++++ neworcinvasion_fix/levellogic.py	2023-11-21 13:00:51.650060761 +0100
+@@ -1,7 +1,7 @@
+ import pygame
+ from maingame import Game
+ from text import show_text_window, wait_for_key_press
+-from databaseconnection import DBConnection
++#from databaseconnection import DBConnection
+ class Level:
+     
+     def __init__(self, level_number, background_path):
+@@ -9,7 +9,7 @@
+         self.background = pygame.image.load(background_path).convert_alpha()
+         self.banner = pygame.image.load(r'image/presstoplay.png').convert_alpha()
+         self.game = Game()
+-        self.db = DBConnection()
++        #self.db = DBConnection()
+         self.y_background = 0
+         self.running = True
+         self.showing_message = False
+@@ -245,3 +245,6 @@
+         pygame.display.update()
+ 
+     pygame.quit()
++
++run_game()
++
