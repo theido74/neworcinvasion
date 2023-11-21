@@ -7,7 +7,7 @@ class Level:
     def __init__(self, level_number, background_path):
         self.level_number = level_number
         self.background = pygame.image.load(background_path).convert_alpha()
-        self.banner = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\presstoplay.png').convert_alpha()
+        self.banner = pygame.image.load(r'image\presstoplay.png').convert_alpha()
         self.game = Game()
         self.db = DBConnection()
         self.y_background = 0
@@ -29,18 +29,11 @@ class Level:
                 self.y_background = 0
                 screen.blit(self.background, (x_background, int(self.y_background)))
 
-            if self.game.isplaying:
-                self.game.updatescore(screen)
-
-            else:
-                screen.blit(self.banner, (50, 150))
-                pygame.display.flip()
-
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                elif event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN: 
                     self.game.pressed[event.key] = True
 
                     if event.key == pygame.K_SPACE:
@@ -53,9 +46,16 @@ class Level:
 
                 elif event.type == pygame.KEYUP:
                     self.game.pressed[event.key] = False
-            
+        
 
-            if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 0:
+            if self.game.isplaying:
+                self.game.updatescore(screen)
+
+            else:
+                screen.blit(self.banner, (50, 150))
+                pygame.display.flip()
+
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game .secondspawn == False and self.level_number == 0:
                 self.game.startsecondspawn()                
                 self.game.player.allprojectiles.empty()
 
@@ -78,7 +78,7 @@ class Level:
                 print('level',self.level_number)
             
             if self.level_number == 1:
-                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\fondlvl1.jpg').convert_alpha()
+                self.background = pygame.image.load(r'image\fondlvl1.jpg').convert_alpha()
                 level_completed = False
  
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 1:          
@@ -112,7 +112,7 @@ class Level:
 
             
             if self.level_number == 2:
-                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond6.png').convert_alpha()
+                self.background = pygame.image.load(r'image\fondlvl2.png').convert_alpha()
                 level_completed = False
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 2:          
@@ -141,7 +141,7 @@ class Level:
                 print('level',self.level_number)
 
             if self.level_number == 3:
-                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondnain1.png').convert_alpha()
+                self.background = pygame.image.load(r'image\fondlvl3.png').convert_alpha()
                 level_completed = False
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 3:          
@@ -172,7 +172,7 @@ class Level:
                 self.game.player.allprojectiles.empty()
 
             if self.level_number == 4:
-                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondnain2.png').convert_alpha()
+                self.background = pygame.image.load(r'image\fondlvl4.png').convert_alpha()
                 level_completed = False
 
 
@@ -183,11 +183,11 @@ class Level:
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.secondspawn == False and self.level_number == 4:
                 self.game.startlvl4second()
                 self.game.player.allprojectiles.empty()
-                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
-                self.game.gobelinmassue.allprojectilegobelinmassue.empty()  
+                self.game.gobelinarcher.allprojectilesgobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilesgobelinmassue.empty()  
 
             if self.game.isplaying and self.game.bossspawned == False and self.game.enemyremain == 0 and not level_completed and self.level_number == 4:
-                self.level_number +=1
+                self.level_number +=1 
                 level_completed = True
                 self.game.nextlevel()
                 self.showing_message = True
@@ -196,18 +196,19 @@ class Level:
                 self.showing_message = False
                 self.game.firstspawn = False
                 print('level',self.level_number)
-                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
-                self.game.gobelinmassue.allprojectilegobelinmassue.empty() 
+                self.game.gobelinarcher.allprojectilesgobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilesgobelinmassue.empty() 
 
             if self.level_number == 5:
-                self.background = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fondbalrog.png').convert_alpha()
+                self.background = pygame.image.load(r'image\fondlvl5.png').convert_alpha()
                 level_completed = False  
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 5:          
                 self.game.startbossbalrog()
                 print('startbalrog')
-                self.game.gobelinarcher.allprojectilegobelinarcher.empty()  
-                self.game.gobelinmassue.allprojectilegobelinmassue.empty()  
+                self.game.gobelinarcher.allprojectilesgobelinarcher.empty()  
+                self.game.gobelinmassue.allprojectilesgobelinmassue.empty()  
+
             
 
             if self.game.pressed.get(pygame.K_RIGHT) and self.game.player.rect.x + self.game.player.rect.width < screen.get_width():
@@ -226,10 +227,10 @@ def run_game():
     pygame.init()
     clock = pygame.time.Clock()
     pygame.display.set_caption('Space Orc Invasion')
-    screen = pygame.display.set_mode((432, 728))
+    screen = pygame.display.set_mode((432, 680))
 
     # Création des niveaux
-    level_0 = Level(0, r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fond1.png')
+    level_0 = Level(0, r'image\fond1.png')
 
 
     # Boucle principale du jeu
@@ -238,7 +239,7 @@ def run_game():
         level_0.run_level(screen, clock)
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT:  
                 running = False
 
         pygame.display.update()

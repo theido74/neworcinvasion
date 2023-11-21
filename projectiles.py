@@ -1,27 +1,31 @@
 import pygame
 
 
+
 class Projectiles(pygame.sprite.Sprite):
     def __init__(self, player, game):
         super().__init__()
         self.velocity = 10
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\boulenergie copie.png').convert_alpha()
+        self.image = pygame.image.load(r'image\boulenergie copie.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (70, 50))
         self.rect = self.image.get_rect()
         self.player = player
         self.game = game
         self.rect.x = player.rect.x + 10
         self.rect.y = player.rect.y
+        self.game = game
 
     def move(self):
         self.rect.y -= self.velocity
         if self.rect.y <= 0 - self.image.get_height():
-            self.remove()
+            self.kill()
+
         enemies_hit = pygame.sprite.spritecollide(self, self.game.allenemies, False)
         for enemy in enemies_hit:
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
             enemy.damage(self.player.attack)
-
+            Projectiles.remove(self)
+            
         bonusattack_hit = pygame.sprite.spritecollide(self, self.game.allbonusattack, False)
         for bonusattack in bonusattack_hit:
             # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
@@ -65,17 +69,19 @@ class Projectiles(pygame.sprite.Sprite):
             boss.damage(self.player.attack)
 
         self.game.player.allprojectiles.add(self)
-       
 
-    def remove(self):
-        self.game.player.allprojectiles.remove(self)
+    def kill(self):
+        super().kill()
+
+    
+       
 
 class ProjectilesGoodelf(pygame.sprite.Sprite):
     def __init__(self, bonus, game):
         super().__init__()
         self.velocity = 10
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\flecheelf.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70, 50))
+        self.image = pygame.image.load(r'image\flecheelf.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 35))
         self.rect = self.image.get_rect()
         self.bonus = bonus
         self.game = game
@@ -135,9 +141,9 @@ class ProjectilesGoodelf(pygame.sprite.Sprite):
 class ProjectilesEnemy(pygame.sprite.Sprite):
     def __init__(self, enemy, game):
         super().__init__()
-        self.velocity = 6
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\laserenemy.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70, 50))
+        self.velocity = 5
+        self.image = pygame.image.load(r'image\laserenemy.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 35))
         self.rect = self.image.get_rect()
         self.enemy = enemy
         self.game = game
@@ -178,8 +184,8 @@ class ProjectilesEnemyOnaBoat(ProjectilesEnemy):
     def __init__(self, enemyonaboat, game):
         super().__init__(enemyonaboat, game)
         self.velocity = 8
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\filetorc.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (90, 90))
+        self.image = pygame.image.load(r'image\filetorc.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 35))
         self.rect = self.image.get_rect()
         self.enemyonaboat = enemyonaboat
         self.game = game
@@ -221,8 +227,8 @@ class ProjectilesEnemyOnaBoat(ProjectilesEnemy):
 class ProjectilesWargPoison(ProjectilesEnemy):
     def __init__(self, warg, game):
         super().__init__(warg, game)
-        self.velocity = 9
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\wargpoison.png').convert_alpha()
+        self.velocity = 6
+        self.image = pygame.image.load(r'image\wargpoison.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.warg = warg
@@ -263,7 +269,7 @@ class ProjectilesDwarf(ProjectilesEnemy):
     def __init__(self, dwarf, game):
         super().__init__(dwarf, game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachenain.png').convert_alpha()
+        self.image = pygame.image.load(r'image\hachenain.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (60, 40))
         self.rect = self.image.get_rect()
         self.dwarf = dwarf
@@ -304,8 +310,8 @@ class ProjectilesGobelinArcher(ProjectilesEnemy):
     def __init__(self, gobelinarcher, game):
         super().__init__(gobelinarcher, game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\lasergobelin.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (80, 80))
+        self.image = pygame.image.load(r'image\lasergobelin.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.gobelinarcher = gobelinarcher
         self.game = game
@@ -346,8 +352,8 @@ class ProjectilesGobelinMassue(ProjectilesEnemy):
     def __init__(self, gobelinmassue, game):
         super().__init__(gobelinmassue, game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\massuegobelin.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (80, 80))
+        self.image = pygame.image.load(r'image\massuegobelin.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.gobelinmassue = gobelinmassue
         self.game = game
@@ -388,8 +394,8 @@ class ProjectilesBoss (ProjectilesEnemy):
     def __init__(self, boss, game):
         super().__init__(boss, game)
         self.velocity = 7
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\energiebossorc.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (90, 150))
+        self.image = pygame.image.load(r'image\energiebossorc.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (90, 90))
         self.rect = self.image.get_rect()
         self.boss = boss
         self.game = game
@@ -432,8 +438,8 @@ class ProjectilesBossBoat (ProjectilesEnemy):
     def __init__(self, bossboat, game):
         super().__init__(bossboat, game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\boulet.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (90, 90))
+        self.image = pygame.image.load(r'image\boulet.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.bossboat = bossboat
         self.game = game
@@ -477,7 +483,7 @@ class ProjectilesBossWarg (ProjectilesEnemy):
     def __init__(self, bosswarg, game):
         super().__init__(bosswarg, game)
         self.velocity = 8
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebosswarg.png').convert_alpha()
+        self.image = pygame.image.load(r'image\hachebosswarg.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (90, 90))
         self.image = pygame.transform.flip(self.image,False,True)
         self.rect = self.image.get_rect()
@@ -522,9 +528,9 @@ class ProjectilesBossWarg (ProjectilesEnemy):
 class ProjectilesBossDwarf (ProjectilesEnemy):
     def __init__(self, bossdwarf, game):
         super().__init__(bossdwarf, game)
-        self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\hachebossnain.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (125, 125))
+        self.velocity = 4
+        self.image = pygame.image.load(r'image\hachebossnain.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.bossdwarf = bossdwarf
         self.game = game
@@ -567,7 +573,7 @@ class ProjectilesBalrog (ProjectilesEnemy):
     def __init__(self, balrog, game):
         super().__init__(balrog, game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\fouetbalrog.png').convert_alpha()
+        self.image = pygame.image.load(r'image\fouetbalrog.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.balrog = balrog
@@ -583,21 +589,21 @@ class ProjectilesBalrog (ProjectilesEnemy):
         hits = pygame.sprite.spritecollide(self, self.game.allplayers, False)
         for player in hits:
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
-            player.damage(self.bossbalrog.attack)
+            player.damage(self.balrog.attack)
 
         self.game.bossbalrog.allprojectilesbossbalrog.add(self)
 
         hitsbonus = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
         for goodelf in hitsbonus:
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
-            goodelf.damage(self.bossbalrog.attack)
+            goodelf.damage(self.balrog.attack)
 
         self.game.bossbalrog.allprojectilesbossbalrog.add(self)
 
         hitsbonusmelee = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
         for goodelfsword in hitsbonusmelee:
             # Réduisez la vie du joueur en fonction de l'attaque de l'ennemi
-            goodelfsword.damage(self.bossbalrog.attack)
+            goodelfsword.damage(self.balrog.attack)
 
         self.game.bossbalrog.allprojectilesbossbalrog.add(self)
 

@@ -22,7 +22,7 @@ class Explose(pygame.sprite.Sprite):
 
 def loadanimation():
     images = []
-    path = r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\ressource\ressource\explose\explose'
+    path = r'anime\explose\explose'
     for num in range(1, 46):
         image_path = path + str(num) + '.png'
         img = pygame.image.load(image_path)

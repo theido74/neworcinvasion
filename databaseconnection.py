@@ -1,5 +1,6 @@
 import mysql.connector
 from classesql import User
+import bcrypt
 
 class DBConnection():
     userid = ''
@@ -66,17 +67,19 @@ class DBConnection():
     def adduser(self, user: User):
         resultat = 0
         if self.connection and self.connection.is_connected():
+            hashed_password = bcrypt.hashpw(user.passw.encode('utf-8'), bcrypt.gensalt())
             with self.connection.cursor() as cursor:
                 cursor.execute(("INSERT INTO Endof4age (username, passw, age, email, gender, highscore) "
-                                        "VALUES (%s, %s, %s, %s, %s, %s)"),
-                                        (user.username, user.passw, user.age,
-                                         user.email, user.gender, user.highscore))
+                                "VALUES (%s, %s, %s, %s, %s, %s)"),
+                                (user.username, hashed_password, user.age,
+                                user.email, user.gender, user.highscore))
                 self.connection.commit()
                 resultat = cursor.lastrowid
             self.lastmessage = "insertion terminée"
         else:
             self.lastmessage = "Could not connect"
         return resultat
+
     
     def is_username_exists(self, username):
         if self.connection and self.connection.is_connected():
@@ -96,15 +99,21 @@ class DBConnection():
                     return True  # L'e-mail existe 
         return False  # L'e-mail est unique
     
-    def is_login_true(self, username, passw):
+    def is_login_true(self, username, password):
         if self.connection and self.connection.is_connected():
             with self.connection.cursor() as cursor:
-                cursor.execute('SELECT COUNT(username) FROM Endof4age WHERE username = %s AND passw = %s', (username, passw))
+                cursor.execute('SELECT passw FROM Endof4age WHERE username = %s', (username,))
                 result = cursor.fetchone()
-                if result and result[0] > 0:
-                    DBConnection.userid = username
-                    print('DBuserid',DBConnection.userid, 'username',username)
-                    return True  # L'utilisateur est authentifié
+
+                if result:
+                    hashed_password = result[0].encode('utf-8')
+
+                    # Vérifiez le mot de passe haché avec le mot de passe fourni par l'utilisateur
+                    if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+                        DBConnection.userid = username
+                        print('DBuserid', DBConnection.userid, 'username', username)
+                        return True  # L'utilisateur est authentifié
+
         return False  # L'authentification a échoué
     
     def executed(self, query, params=None):

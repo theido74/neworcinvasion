@@ -66,7 +66,6 @@ class Game:
         self.bonusremain = 0
         self.db = DBConnection()
         self.userdata = self.db.finduserdic()
-        print('GAME',self.userdata)#ok
 
 
 
@@ -207,7 +206,7 @@ class Game:
     def startbossdwarf(self):
         self.player.allprojectiles.empty()
         if self.enemyremain == 0:
-            for _ in range(5):
+            for _ in range(2):
                 self.spawnbossdwarf()
                 self.bossspawned = True
 
@@ -227,18 +226,9 @@ class Game:
         self.allprojectiles.remove()
 
     def gameover (self):
-        for i in self.userdata.values():
-            print('GAME-gameover',i)
-
-        print('userdata',self.userdata.values())#OK
         if 'username' in self.userdata:
             username_value = self.userdata['username']
-            print('GAME GAME OVER username_value', username_value)
-            print('GAME GAME OVERself.score', self.score)
-
             self.db.savehighscore(username_value, self.score)
-        else:
-            print("Erreur : clé 'username' non trouvée dans self.userdata.")
 
         self.level_number = 0
         self.score = 0
@@ -249,11 +239,18 @@ class Game:
         
 
     def updatescore(self, screen):
-        font = pygame.font.SysFont('Small font', 20, 0)
-        scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
-        screen.blit(scoretext, (20,20))
-        screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
-    
+        if 'highscore' in self.userdata:
+            highscore_value = self.userdata['highscore']
+            font = pygame.font.SysFont('Small font', 20, 0)
+            scoretext = font.render(f'Score: {self.score}\nHighscore: {highscore_value}', 1, (255, 0, 0))
+            screen.blit(scoretext, (20,20))
+            screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
+        else:
+            font = pygame.font.SysFont('Small font', 20, 0)
+            scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
+            screen.blit(scoretext, (20,20))
+            screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
+            
 
         for explose in self.allexploses:
             if explose.animation:
@@ -264,6 +261,7 @@ class Game:
 
         for projectile in self.player.allprojectiles:
             projectile.move()
+        self.player.allprojectiles.update()
         self.player.allprojectiles.draw(screen)
 
         for player in self.allplayers:
@@ -378,18 +376,18 @@ class Game:
             gobelinarcher.updatehealthbar(screen)
         self.allgobelinarcher.draw(screen)
 
-        for projectile in self.gobelinarcher.allprojectilegobelinarcher:
+        for projectile in self.gobelinarcher.allprojectilesgobelinarcher:
             projectile.move()
-        self.gobelinarcher.allprojectilegobelinarcher.draw(screen)
+        self.gobelinarcher.allprojectilesgobelinarcher.draw(screen)
 
         for gobelinmassue in self.allgobelinmassue:
             gobelinmassue.move()
             gobelinmassue.updatehealthbar(screen)
         self.allgobelinmassue.draw(screen)
 
-        for projectile in self.gobelinmassue.allprojectilegobelinmassue:
+        for projectile in self.gobelinmassue.allprojectilesgobelinmassue:
             projectile.move()
-        self.gobelinmassue.allprojectilegobelinmassue.draw(screen)
+        self.gobelinmassue.allprojectilesgobelinmassue.draw(screen)
 
         for bossbalrog in self.allboss:
             bossbalrog.move()
@@ -493,7 +491,7 @@ class Game:
         self.allboss.add(self.bossboat)
         self.enemyremain += 1
         self.bossspawned = True
-        print('boss', self.enemyremain)
+        print('boss boat', self.enemyremain)
     
     def spawnbosswarg(self):
         self.bosswarg = BossWarg(self)
@@ -507,14 +505,14 @@ class Game:
         self.allboss.add(self.bossdwarf)
         self.enemyremain += 1
         self.bossspawned = True
-        print('boss warg', self.enemyremain)
+        print('boss dwarf', self.enemyremain)
 
     def spawnbossbalrog(self):
         self.bossbalrog = BossBalrog(self)
         self.allboss.add(self.bossbalrog)
         self.enemyremain += 1
         self.bossspawned = True
-        print('boss warg', self.enemyremain)
+        print('boss balrog', self.enemyremain)
 
 
 

@@ -1,16 +1,16 @@
 import pygame
 from pygame.math import Vector2
 from random import randint
-from projectiles import ProjectilesEnemy, ProjectilesBoss, ProjectilesEnemyOnaBoat, ProjectilesBossBoat, ProjectilesWargPoison, ProjectilesBossWarg,ProjectilesDwarf, ProjectilesBossDwarf,ProjectilesGobelinArcher, ProjectilesGobelinMassue, ProjectilesBalrog
+from projectiles import Projectiles,ProjectilesEnemy, ProjectilesBoss, ProjectilesEnemyOnaBoat, ProjectilesBossBoat, ProjectilesWargPoison, ProjectilesBossWarg,ProjectilesDwarf, ProjectilesBossDwarf,ProjectilesGobelinArcher, ProjectilesGobelinMassue, ProjectilesBalrog
 from explose import Explose
+from player import Player
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.velocity = 1.8
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\orc1.png')
+        self.image = pygame.image.load(r'image\orcenemy.png')
         self.image = pygame.transform.scale(self.image, (50, 50))
-        self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
         self.rect.x = randint(100, 400)
         self.rect.y = 1
@@ -90,9 +90,8 @@ class Peon(Enemy,pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\peon.png')
-        self.image = pygame.transform.scale(self.image, (70, 70))
-        self.image = pygame.transform.flip(self.image, False, True)
+        self.image = pygame.image.load(r'image\peon.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = randint(100, 400)
         self.rect.y = 1
@@ -112,7 +111,7 @@ class Peon(Enemy,pygame.sprite.Sprite):
         if distance_to_player < 50:  # Ajustez la distance d'attaque au besoin
             self.hit()
         # Calculer le vecteur de direction vers le joueur
-        direction = Vector2(self.game.player.rect.x - self.rect.x, self.game.player.rect.y - self.rect.y).normalize()
+        direction = Vector2(self.game.player.rect.x+1 - self.rect.x+1, self.game.player.rect.y+1 - self.rect.y+1).normalize()
 
         # Déplacer l'ennemi dans la direction du joueur
         self.rect.x += direction.x * self.velocity
@@ -121,9 +120,9 @@ class Peon(Enemy,pygame.sprite.Sprite):
     def hit(self):
         if self.game.player.health > 1:
             self.game.player.damage(self.attack)
-        if self.game.player.health > 1:
+        if self.game.goodelf.health > 1:
             self.game.goodelf.damage(self.attack)
-        if self.game.player.health > 1:
+        if self.game.goodelfsword.health > 1:
             self.game.goodelfsword.damage(self.attack)
         
 
@@ -163,8 +162,8 @@ class EnemyOnBoat(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 0.8
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orconaboat1-pixelicious.png')
-        self.image = pygame.transform.scale(self.image, (140, 140))
+        self.image = pygame.image.load(r'image\orconaaboat.png')
+        self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
         self.rect.x = randint(100, 400)
         self.rect.y = 1
@@ -244,9 +243,8 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\warg.png')
-        self.image = pygame.transform.scale(self.image, (120, 120))
-        self.image = pygame.transform.flip(self.image, False, True)
+        self.image = pygame.image.load(r'image\wargenemy.png')
+        self.image = pygame.transform.scale(self.image, (60, 60))
         self.rect = self.image.get_rect()
         self.rect.x = randint(100, 400)
         self.rect.y = 1
@@ -259,7 +257,7 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
         self.health = 500 # Nombre de vies initiales
         self.maxhealth = self.health
         self.attack = 6
-        self.shoot_cooldown = 500  # Temps en millisecondes entre chaque tir
+        self.shoot_cooldown = 1200  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
@@ -338,10 +336,9 @@ class EnemyWarg(Enemy, pygame.sprite.Sprite):
 class EnemyDwarf(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 1.2
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\nain avec hache.png')
-        self.image = pygame.transform.scale(self.image, (80, 80))
-        self.image = pygame.transform.flip(self.image, False, True)
+        self.velocity = 1.5
+        self.image = pygame.image.load(r'image\nainenemy.png')
+        self.image = pygame.transform.scale(self.image, (60, 60))
         self.rect = self.image.get_rect()
         self.rect.x =  randint(100, 400)
         self.rect.y = 1
@@ -421,16 +418,15 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 1.5
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\gobelinarcher.png')
-        self.image = pygame.transform.scale(self.image, (80, 80))
-        self.image = pygame.transform.flip(self.image, False, True)
+        self.image = pygame.image.load(r'image\gobelinarcher.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x =  randint(100, 400)
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 200)
         self.projectilegobelinarcher = ProjectilesGobelinArcher(self, game)
-        self.allprojectilegobelinarcher = pygame.sprite.Group()
+        self.allprojectilesgobelinarcher = pygame.sprite.Group()
         self.allgobelinarcher = pygame.sprite.Group()
         self.game = game
         self.health = 200 # Nombre de vies initiales
@@ -462,10 +458,10 @@ class EnemyGobelinArcher(Enemy, pygame.sprite.Sprite):
             self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
 
     def shoot(self):
-        self.allprojectilegobelinarcher.add(ProjectilesGobelinArcher(self, self.game))        
+        self.allprojectilesgobelinarcher.add(ProjectilesGobelinArcher(self, self.game))        
     
     def launchprojectilesgobelinarcher(self):
-        self.allprojectilegobelinarcher.add(ProjectilesGobelinArcher(self, self.game))
+        self.allprojectilesgobelinarcher.add(ProjectilesGobelinArcher(self, self.game))
 
     def kill(self):
         super().kill()
@@ -503,16 +499,15 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 4
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\gobelinmassue.png')
-        self.image = pygame.transform.scale(self.image, (90, 90))
-        self.image = pygame.transform.flip(self.image, False, True)
+        self.image = pygame.image.load(r'image\gobelinmassue.png')
+        self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 300)
+        self.position_y = randint(0, 500)
         self.projectilegobelinmassue = ProjectilesGobelinMassue(self, game)
-        self.allprojectilegobelinmassue = pygame.sprite.Group()
+        self.allprojectilesgobelinmassue = pygame.sprite.Group()
         self.allgobelinmassue = pygame.sprite.Group()
         self.game = game
         self.health = 300 # Nombre de vies initiales
@@ -540,7 +535,7 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
             self.rect.x-= self.velocity
         if abs(self.rect.x - self.position_x) < self.velocity/2:
            self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesboss() 
+           self.launchprojectilesgobelinmassue() 
         if self.rect.y < self.position_y:
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
@@ -557,10 +552,10 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
             self.last_shot_time = current_time  # Mettez à jour le temps du dernier tir
 
     def shoot(self):
-        self.allprojectilegobelinmassue.add(ProjectilesGobelinMassue(self, self.game))        
+        self.allprojectilesgobelinmassue.add(ProjectilesGobelinMassue(self, self.game))        
     
     def launchprojectilesgobelinmassue(self):
-        self.allprojectilegobelinmassue.add(ProjectilesGobelinMassue(self, self.game))
+        self.allprojectilesgobelinmassue.add(ProjectilesGobelinMassue(self, self.game))
 
     def kill(self):
         super().kill()
@@ -597,13 +592,13 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
 class Boss(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 0.6
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orcboss.png')
-        self.image = pygame.transform.scale(self.image, (130, 130))
+        self.velocity = 0.7
+        self.image = pygame.image.load(r'image\orcboss.png')
+        self.image = pygame.transform.scale(self.image, (90, 90))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
-        self.position_x = randint(0, (250 - self.rect.width))
+        self.position_x = randint(0, (460 - self.rect.width))
         self.position_y = randint(0, 150)
         self.projectileboss = ProjectilesBoss(self, game)
         self.allprojectilesboss = pygame.sprite.Group()
@@ -616,13 +611,12 @@ class Boss(Enemy, pygame.sprite.Sprite):
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
-        if self.rect.y > 150:
-            self.rect.y = 150
+
         if self.rect.x < self.position_x:
             self.rect.x += self.velocity 
         if self.rect.x > self.position_x:          
             self.rect.x-= self.velocity 
-        if abs(self.rect.x - self.position_x) < self.velocity:
+        if abs(self.rect.x - self.position_x) < self.velocity/2:
            self.position_x = randint(0, (460 - self.rect.width))
            self.launchprojectilesenemy() 
         if self.rect.y < self.position_y:
@@ -678,14 +672,14 @@ class Boss(Enemy, pygame.sprite.Sprite):
 class BossBoat(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
-        self.velocity = 0.6
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\Bigboatorc.png')
-        self.image = pygame.transform.scale(self.image, (180, 180))
+        self.velocity = 0.7
+        self.image = pygame.image.load(r'image\bossorcboat.png')
+        self.image = pygame.transform.scale(self.image, (110, 110))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
         self.rect.y = 1
         self.position_x = randint(0, (460 - self.rect.width))
-        self.position_y = randint(0, 250)
+        self.position_y = randint(0, 180)
         self.projectilebossboat = ProjectilesBossBoat(self, game)
         self.allprojectilesbossboat = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
@@ -711,7 +705,7 @@ class BossBoat(Enemy, pygame.sprite.Sprite):
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
         if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 300)
+           self.position_y = randint(0, 180)
         self.check_shoot()
 
     def updatehealthbar(self, surface):
@@ -763,7 +757,7 @@ class BossWarg(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 0.6
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\orcwarg.png')
+        self.image = pygame.image.load(r'image\bossorcwarg.png')
         self.image = pygame.transform.scale(self.image, (180, 180))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -855,7 +849,7 @@ class BossDwarf(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 0.6
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\naincyborg avec hache.png')
+        self.image = pygame.image.load(r'image\bossnainenemy.png')
         self.image = pygame.transform.scale(self.image, (120, 120))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -866,9 +860,9 @@ class BossDwarf(Enemy, pygame.sprite.Sprite):
         self.allprojectilesbossdwarf = pygame.sprite.Group()
         self.allboss = pygame.sprite.Group()
         self.game = game
-        self.health = 350 # Nombre de vies initiales
+        self.health = 2500 # Nombre de vies initiales
         self.maxhealth = self.health
-        self.attack = 20
+        self.attack = 13
         self.shoot_cooldown = 2500  # Temps en millisecondes entre chaque tir
         self.last_shot_time = 0  # Temps du dernier tir
 
@@ -884,7 +878,7 @@ class BossDwarf(Enemy, pygame.sprite.Sprite):
             self.rect.y += self.velocity
         if self.rect.y > self.position_y:
             self.rect.y -= self.velocity
-        if abs(self.rect.y - self.position_y) < self.velocity:
+        if abs(self.rect.y - self.position_y) < self.velocity/2:
            self.position_y = randint(0, 250)
         self.check_shoot()
 
@@ -932,7 +926,7 @@ class BossBalrog(Enemy, pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__(game)
         self.velocity = 2
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\balrog.png')
+        self.image = pygame.image.load(r'image\balrog.png')
         self.image = pygame.transform.scale(self.image, (250, 220))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )

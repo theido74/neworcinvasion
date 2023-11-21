@@ -6,7 +6,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\Blind chess openning\Image\game\gandalfperso copie.png')
+        self.image = pygame.image.load(r'image\gandalfplayer.png')
         self.rect = self.image.get_rect()
         self.rect.x = 170
         self.rect.y = 600
@@ -35,8 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.game.music.shoot_sound.play()
         self.allprojectiles.add(Projectiles(self, self.game))
 
-    def remove(self):
-        self.game.allplayer.remove(self)
+    # def killprojectile(self):
+    #     self.allprojectiles.remove(Projectiles(self, self.game))
+
     
     def kill(self):
         self.health -= 1

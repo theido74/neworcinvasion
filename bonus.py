@@ -8,7 +8,7 @@ class BonusAttack(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.velocity = 0
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\elfbonusicone.png')
+        self.image = pygame.image.load(r'image\elfbonusicone.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
@@ -34,7 +34,7 @@ class BonusMelee(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.velocity = 0
-        self.image = pygame.image.load(r'c:\Users\ponce\Desktop\python\23.10.23.space\Image\game\elfbonusicone.png')
+        self.image = pygame.image.load(r'image\elfbonusicone.png')
         self.image = pygame.transform.scale(self.image, (30, 30))
         self.image = pygame.transform.flip(self.image, False, True)
         self.rect = self.image.get_rect()
@@ -60,7 +60,7 @@ class GoodElf(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.velocity = 3
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\elfbonus.png')
+        self.image = pygame.image.load(r'image\elfbonus.png')
         self.image = pygame.transform.scale(self.image, (110, 110))
         self.rect = self.image.get_rect()
         self.rect.x = 200- int(self.rect.width /2 )
@@ -142,7 +142,7 @@ class GoodElfSword(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.velocity = 5
-        self.image = pygame.image.load(r'C:\Users\ponce\Desktop\python\23.10.23.space\Image\game\goodelfsword.png')
+        self.image = pygame.image.load(r'image\goodelfsword.png')
         self.image = pygame.transform.scale(self.image, (110, 110))
         self.rect = self.image.get_rect()
         self.rect.x = randint(100,400)
