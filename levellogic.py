@@ -1,6 +1,7 @@
 import pygame
 from maingame import Game
-from text import show_text_window, wait_for_key_press
+from text import show_text_window, wait_for_key_press, show_image, Story2
+import tkinter as tk
 from databaseconnection import DBConnection
 class Level:
     
@@ -40,6 +41,7 @@ class Level:
                         self.game.player.launchprojectile()
 
                     if event.key == pygame.K_s :
+
                         self.game.start()
                         self.level_number = 0
                          
@@ -61,22 +63,36 @@ class Level:
 
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 0:
+                show_image(screen, 'dialogue\gandalfstory1.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, 'dialogue\orc story1.png',-10,250)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
                 self.game.startboss()
    
                 self.game.player.allprojectiles.empty()
                 self.game.enemy.allprojectilesenemy.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 0:
+                show_image(screen, 'dialogue\orc story2.png',0,250)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, 'dialogue\gandalfstory2.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
                 self.level_number +=1
                 level_completed = True       
                 self.game.nextlevel()
                 self.showing_message = True
-                show_text_window(screen, "Level completed! Press sur 'S' to continue")
-                wait_for_key_press(pygame.K_s)
                 self.showing_message = False
                 self.game.boss.allprojectilesboss.empty()
                 print('level',self.level_number)
-            
+                root = tk.Tk()
+                app_login = Story2(root,r'image\tolacville.png')
+                app_login.run()
+                show_text_window(screen, "Level completed! Press sur 'S' to continue")
+                wait_for_key_press(pygame.K_s)
+
             if self.level_number == 1:
                 self.background = pygame.image.load(r'image\fondlvl1.jpg').convert_alpha()
                 level_completed = False
@@ -94,15 +110,31 @@ class Level:
                 print('start boat 2nd')
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 1:
-                self.game.startbossboat()
+                show_image(screen, 'dialogue\gandalfstory3.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, 'dialogue\orclacville1.png',10,300)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c) 
+                self.game.startbossboat() 
                 self.game.enemyonaboat.allprojectilesenemyonaboat.empty()
                 self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 1:
+                show_image(screen, r'image\boatfond.png',0,0)
+                show_image(screen, r'dialogue\gandalfstory4.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, r'dialogue\orclacville2.png',10,300)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c) 
                 self.level_number +=1
                 level_completed = True
                 self.game.nextlevel()
                 self.showing_message = True
+                root = tk.Tk()
+                app_login = Story2(root,r'image\wargstory.png')
+                app_login.run()
                 show_text_window(screen, "Level completed! Press sur 'S' to continue")
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
@@ -125,15 +157,27 @@ class Level:
                 self.game.warg.allprojectileswargpoison.empty()
             
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 2:
+                show_image(screen, 'dialogue\wargstory1.png',50,350)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, 'dialogue\gandalfstory5.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
                 self.game.startbosswarg()
                 self.game.warg.allprojectileswargpoison.empty()
                 self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 2:
+                show_image(screen, r'dialogue\gandalfstory6.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
                 self.level_number +=1
                 level_completed = True
                 self.game.nextlevel()
                 self.showing_message = True
+                root = tk.Tk()
+                app_login = Story2(root,r'image\tothebluemountain.png')
+                app_login.run()
                 show_text_window(screen, "Level completed! Press sur 'S' to continue")
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
@@ -144,7 +188,17 @@ class Level:
                 self.background = pygame.image.load(r'image\fondlvl3.png').convert_alpha()
                 level_completed = False
 
-            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 3:          
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 3:
+                show_image(screen, r'dialogue\gandalfstory7.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)  
+                show_image(screen, r'dialogue\nain1story1.png',50,350)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, r'dialogue\gandalfstory8.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)  
+       
                 self.game.startlvl3()
                 print('startdwarf1')
 
@@ -154,15 +208,32 @@ class Level:
                 self.game.warg.allprojectileswargpoison.empty()
 
             if self.game.isplaying and self.game.enemyremain == 0 and self.game.bossspawned == False and self.level_number == 3:
+                show_image(screen, r'dialogue\nain2story1.png',50,350)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, r'dialogue\gandalfstory9.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)  
+               
+       
                 self.game.startbossdwarf()
                 self.game.warg.allprojectileswargpoison.empty()
                 self.game.player.allprojectiles.empty()
 
             if self.game.isplaying and self.game.bossspawned == True and self.game.enemyremain == 0 and not level_completed and self.level_number == 3:
+                show_image(screen, r'dialogue\nain2story12.png',50,350)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, r'dialogue\gandalfstory10.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)  
                 self.level_number +=1
                 level_completed = True   
                 self.game.nextlevel()
                 self.showing_message = True
+                root = tk.Tk()
+                app_login = Story2(root,r'image\tothegobelin.png')
+                app_login.run()
                 show_text_window(screen, "Level completed! Press sur 'S' to continue")
                 wait_for_key_press(pygame.K_s)
                 self.showing_message = False
@@ -176,7 +247,13 @@ class Level:
                 level_completed = False
 
 
-            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 4:          
+            if self.game.isplaying and self.game.enemyremain == 0 and self.game.firstspawn == False and self.level_number == 4:     
+                show_image(screen, r'dialogue\gobelinstory1.png',50,350)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)
+                show_image(screen, r'dialogue\gandalfstory11.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)       
                 self.game.startlvl4()
                 print('startgobelin1')
 
@@ -184,9 +261,13 @@ class Level:
                 self.game.startlvl4second()
                 self.game.player.allprojectiles.empty()
                 self.game.gobelinarcher.allprojectilesgobelinarcher.empty()  
-                self.game.gobelinmassue.allprojectilesgobelinmassue.empty()  
+                self.game.gobelinmassue.allprojectilesgobelinmassue.empty() 
+
 
             if self.game.isplaying and self.game.bossspawned == False and self.game.enemyremain == 0 and not level_completed and self.level_number == 4:
+                show_image(screen, r'dialogue\gandalfstory12.png',-80,290)
+                show_text_window(screen, "Press sur 'C' to continue")
+                wait_for_key_press(pygame.K_c)       
                 self.level_number +=1 
                 level_completed = True
                 self.game.nextlevel()
@@ -232,11 +313,11 @@ def run_game():
     # Création des niveaux
     level_0 = Level(0, r'image\fond1.png')
 
-
     # Boucle principale du jeu
     running = True
     while running:
         level_0.run_level(screen, clock)
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
@@ -245,6 +326,4 @@ def run_game():
         pygame.display.update()
 
     pygame.quit()
-
 run_game()
-

@@ -517,32 +517,24 @@ class EnemyGobelinMassue(Enemy, pygame.sprite.Sprite):
         self.last_shot_time = 0  # Temps du dernier tir
 
     def move(self):
-        player_hit = pygame.sprite.spritecollide(self, self.game.allplayers, False)
-        for player in player_hit:
-            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
-            player.damage(self.attack)
-        goodelf_hit = pygame.sprite.spritecollide(self, self.game.allgoodelf, False)
-        for goodelf in goodelf_hit:
-            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
-            goodelf.damage(self.attack)
-        goodelfsword_hit = pygame.sprite.spritecollide(self, self.game.allgoodelfsword, False)
-        for goodelfsword in goodelfsword_hit:
-            # Réduisez la vie de l'ennemi en fonction de l'attaque du joueur
-            goodelfsword.damage(self.attack)
-        if self.rect.x < self.position_x:
-            self.rect.x += self.velocity
-        if self.rect.x > self.position_x:          
-            self.rect.x-= self.velocity
-        if abs(self.rect.x - self.position_x) < self.velocity/2:
-           self.position_x = randint(0, (460 - self.rect.width))
-           self.launchprojectilesgobelinmassue() 
-        if self.rect.y < self.position_y:
-            self.rect.y += self.velocity
-        if self.rect.y > self.position_y:
-            self.rect.y -= self.velocity
-        if abs(self.rect.y - self.position_y) < self.velocity:
-           self.position_y = randint(0, 500)
-        self.check_shoot()
+        # Vérifier la proximité du joueur
+        distance_to_player = pygame.math.Vector2(self.game.player.rect.x - self.rect.x, self.game.player.rect.y - self.rect.y).length()
+        if distance_to_player < 50:  # Ajustez la distance d'attaque au besoin
+            self.hit()
+        # Calculer le vecteur de direction vers le joueur
+        direction = Vector2(self.game.player.rect.x+1 - self.rect.x+1, self.game.player.rect.y+1 - self.rect.y+1).normalize()
+
+        # Déplacer l'ennemi dans la direction du joueur
+        self.rect.x += direction.x * self.velocity
+        self.rect.y += direction.y * self.velocity
+
+    def hit(self):
+        if self.game.player.health > 1:
+            self.game.player.damage(self.attack)
+        if self.game.goodelf.health > 1:
+            self.game.goodelf.damage(self.attack)
+        if self.game.goodelfsword.health > 1:
+            self.game.goodelfsword.damage(self.attack)
 
 
     def check_shoot(self):

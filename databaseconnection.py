@@ -6,7 +6,7 @@ class DBConnection():
     userid = ''
     def __init__(self):
         try:
-            self.connection = mysql.connector.connect(user='root', password='****',
+            self.connection = mysql.connector.connect(user='root', password='LaCasita2022',
                                           host='127.0.0.1',
                                           database='datatest')
             self.lastmessage = "Connection successful"

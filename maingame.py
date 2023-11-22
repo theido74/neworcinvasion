@@ -5,6 +5,7 @@ from sound import Sound
 from bonus import BonusAttack,GoodElf, BonusMelee, GoodElfSword
 from databaseconnection import DBConnection
 from classesql import User
+from random import randint
 
 class Game:
     def __init__(self):
@@ -73,43 +74,43 @@ class Game:
     def start(self):
         self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(5):   
+        for _ in range(randint(2,7)):   
             self.spawnenemy()
-            print(self.enemyremain)
-        for _ in range(5):   
+            print('spawn enemy',self.enemyremain)
+        for _ in range(randint(3,9)):   
             self.spawnpeon()
-            print(self.enemyremain)
+            print('spawn peon',self.enemyremain)
 
 
     def startsecondspawn(self):
         self.player.allprojectiles.empty()
         self.isplaying = True
-        for _ in range(9):
+        for _ in range(randint(8,13)):
             self.spawnenemy()
-            print(self.enemyremain)
+            print('spawn enemy',self.enemyremain)
         self.secondspawn = True
-        for _ in range(12):
+        for _ in range(randint(9,15)):
             self.spawnpeon()
-            print(self.enemyremain)
+            print('spawn peon',self.enemyremain)
         self.secondspawn = True
             
     def startlvl1(self):
         self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(8):   
+        for _ in range(randint(6,14)):   
             self.spawnenemyboat()
-            print(self.enemyremain)
-        for _ in range(0):   
+            print('spawn enemyonaboat',self.enemyremain)
+        for _ in range(randint(3,9)):   
             self.spawnpeon()
-            print(self.enemyremain)
+            print('spawn peon',self.enemyremain)
         self.firstspawn = True
     def startlvl1second(self):
         self.player.allprojectiles.empty()
         self.isplaying = True 
-        for _ in range(8):   
+        for _ in range(randint(8,16)):   
             self.spawnenemyboat()
         self.secondspawn = True
-        for _ in range(4):   
+        for _ in range(randint(7,13)):   
             self.spawnenemy()
         self.secondspawn = True
         for _ in range(4):   
@@ -119,37 +120,40 @@ class Game:
     def startlvl2(self):
         self.player.allprojectiles.empty()
         self.isplaying = True
-        for _ in range(8):
+        for _ in range(randint(6,10)):
             self.spawnwarg()
-            print(self.enemyremain)
+            print('spawnwarg',self.enemyremain)
         self.firstspawn = True
         if self.bonusattackspawn == False:
             for _ in range(1):
                 self.spawnbonusattack()
+                print('spawnwarg',self.enemyremain)
+
     def startlvl2second(self):
         self.player.allprojectiles.empty()
         self.goodelf.allprojectilesgoodelf.empty()
         self.isplaying = True 
-        for _ in range(12):   
+        for _ in range(randint(10,18)):   
             self.spawnwarg()
+            print('spawnwarg',self.enemyremain)
         self.secondspawn = True
 
     def startlvl3(self):
         self.bosswarg.allprojectilesbosswarg.empty()
         self.player.allprojectiles.empty()
         self.isplaying = True
-        for _ in range(6):
+        for _ in range(randint(6,10)):
             self.spawndawrf()
-            print(self.enemyremain)
+            print('spawn dwarf',self.enemyremain)
         self.firstspawn = True
     def startlvl3second(self):
         self.player.allprojectiles.empty()
         self.dwarf.allprojectiledwarf.empty()
         self.isplaying = True
-        for _ in range(6):   
+        for _ in range(randint(5,9)):   
             self.spawnenemy()
             print(self.enemyremain)
-        for _ in range(6):
+        for _ in range(randint(7,13)):
             self.spawndawrf()
             print(self.enemyremain)
         self.secondspawn = True
@@ -168,11 +172,11 @@ class Game:
     def startlvl4second(self):
         self.player.allprojectiles.empty()
         self.isplaying = True
-        for _ in range(9):
+        for _ in range(randint(12,20)):
             self.spwangobelinarcher()
             print(self.enemyremain)
         self.firstspawn = True
-        for _ in range(9):
+        for _ in range(randint(12,20)):
             self.spwangobelinmassue()
             print(self.enemyremain)
         self.secondspawn = True        
@@ -184,7 +188,7 @@ class Game:
         if self.enemyremain == 0:
             self.spawnboss()
             self.bossspawned = True
-            for _ in range(2):
+            for _ in range(randint(3,7)):
                 self.spawnpeon()
                 self.spawnenemy()
 
@@ -194,7 +198,7 @@ class Game:
         if self.enemyremain == 0:
             self.spawnbossboat()
             self.bossspawned = True
-            for _ in range(1):
+            for _ in range(randint(4,8)):
                 self.spawnenemyboat()
                 self.spawnenemyboat()
     def startbosswarg(self):
@@ -250,7 +254,7 @@ class Game:
             scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
             screen.blit(scoretext, (20,20))
             screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
-                
+            
 
         for explose in self.allexploses:
             if explose.animation:

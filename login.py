@@ -5,7 +5,6 @@ from classesql import User
 from databaseconnection import DBConnection
 from PIL import Image, ImageTk
 from levellogic import run_game
-from sound import Sound
 
 class Login:
     def __init__(self, root):
