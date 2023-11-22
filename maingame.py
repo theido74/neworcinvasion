@@ -3,7 +3,7 @@ from player import Player
 from enemy import Enemy, Boss, EnemyOnBoat, BossBoat, EnemyWarg, BossWarg, EnemyDwarf, BossDwarf, EnemyGobelinArcher, EnemyGobelinMassue, BossBalrog, Peon
 from sound import Sound
 from bonus import BonusAttack,GoodElf, BonusMelee, GoodElfSword
-#from databaseconnection import DBConnection
+from databaseconnection import DBConnection
 from classesql import User
 
 class Game:
@@ -64,8 +64,8 @@ class Game:
         self.goodelfspawn = False
         self.enemyremain = 0
         self.bonusremain = 0
-        #self.db = DBConnection()
-        #self.userdata = self.db.finduserdic()
+        self.db = DBConnection()
+        self.userdata = self.db.finduserdic()
 
 
 
@@ -226,9 +226,9 @@ class Game:
         self.allprojectiles.remove()
 
     def gameover (self):
-        #if 'username' in self.userdata:
-            #username_value = self.userdata['username']
-            #self.db.savehighscore(username_value, self.score)
+        if 'username' in self.userdata:
+            username_value = self.userdata['username']
+            self.db.savehighscore(username_value, self.score)
 
         self.level_number = 0
         self.score = 0
@@ -239,18 +239,18 @@ class Game:
         
 
     def updatescore(self, screen):
-        #if 'highscore' in self.userdata:
-            #highscore_value = self.userdata['highscore']
-            #font = pygame.font.SysFont('Small font', 20, 0)
-            #scoretext = font.render(f'Score: {self.score}\nHighscore: {highscore_value}', 1, (255, 0, 0))
-            #screen.blit(scoretext, (20,20))
-            #screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
-        #else:
-        font = pygame.font.SysFont('Small font', 20, 0)
-        scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
-        screen.blit(scoretext, (20,20))
-        screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
-            
+        if 'highscore' in self.userdata:
+            highscore_value = self.userdata['highscore']
+            font = pygame.font.SysFont('Small font', 20, 0)
+            scoretext = font.render(f'Score: {self.score}\nHighscore: {highscore_value}', 1, (255, 0, 0))
+            screen.blit(scoretext, (20,20))
+            screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
+        else:
+            font = pygame.font.SysFont('Small font', 20, 0)
+            scoretext = font.render(f'Score : {self.score}', 1, (255,0,0))
+            screen.blit(scoretext, (20,20))
+            screen.blit(self.player.image, self.player.rect)#position du joueur. rec sert a detecter la position du joueur voir terminal
+                
 
         for explose in self.allexploses:
             if explose.animation:
