@@ -1,6 +1,5 @@
 import pygame
-import tkinter as tk
-from PIL import Image, ImageTk
+
 
 class Text:
     def __init__(self,screen):
@@ -32,13 +31,11 @@ def show_image(screen, image_path, x, y):
         print(f"Error loading image: {e}")
         return
 
-    # Obtenir la nouvelle taille en pourcentage
-    width = int(image.get_width() * 22 / 100)
-    height = int(image.get_height() * 22 / 100)
+    width = int(image.get_width() * 25 / 100)
+    height = int(image.get_height() * 25 / 100)
     resized_image = pygame.transform.scale(image, (width, height))
     image_rect = resized_image.get_rect()
 
-    # Définir les coordonnées de l'image
     image_rect.x = x
     image_rect.y = y
 
@@ -46,6 +43,20 @@ def show_image(screen, image_path, x, y):
     pygame.display.flip()
 
 
+def show_image_no_scale(screen, image_path, x, y):
+    try:
+        image = pygame.image.load(image_path).convert_alpha()
+    except pygame.error as e:
+        print(f"Error loading image: {e}")
+        return
 
+    width = int(image.get_width())
+    height = int(image.get_height())
+    resized_image = pygame.transform.scale(image, (width, height))
+    image_rect = resized_image.get_rect()
 
+    image_rect.x = x
+    image_rect.y = y
 
+    screen.blit(resized_image, image_rect)
+    pygame.display.flip()

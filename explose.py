@@ -2,9 +2,9 @@ import pygame
 
 class Explose(pygame.sprite.Sprite):
     def __init__(self, rect_x, rect_y):
-        super().__init__()  # Vous avez oublié les parenthèses ici
-        self.images = loadanimation()  # Assurez-vous d'appeler votre fonction loadanimation pour obtenir la liste d'images
-        self.image = self.images[0]  # Initialisez l'image avec la première image de l'animation
+        super().__init__() 
+        self.images = loadanimation() 
+        self.image = self.images[0] 
         self.rect = self.image.get_rect()
         self.rect.x = rect_x
         self.rect.y = rect_y
