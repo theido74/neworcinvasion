@@ -14,9 +14,9 @@ class Player(pygame.sprite.Sprite):
         self.velocity = 5
         self.projectile = Projectiles(self, game)
         self.allprojectiles = pygame.sprite.Group()
-        self.health = 850 # Nombre de vies initiales
+        self.health = 350 
         self.maxhealth = self.health
-        self.attack = 6
+        self.attack = 30
 
 
     def move_right(self):
@@ -35,11 +35,11 @@ class Player(pygame.sprite.Sprite):
         self.game.music.shoot_sound.play()
         self.allprojectiles.add(Projectiles(self, self.game))
 
-    # def killprojectile(self):
-    #     self.allprojectiles.remove(Projectiles(self, self.game))
 
-    
     def kill(self):
+        super().kill()
+    
+    def killplayer(self):
         self.health -= 1
         if self.health <= 0:
             print('Game Over')
@@ -49,8 +49,6 @@ class Player(pygame.sprite.Sprite):
         bg_bar_color = (230, 0, 0)
         bar_height = 5
         max_bar_width = 120
-
-        # Calcul de la position et de la largeur pour la barre de santé
         bar_width = int(min(self.health / self.maxhealth * self.rect.width, max_bar_width))
         bar_position = [self.rect.x + (self.rect.width - bar_width) // 2, self.rect.y + self.rect.height, bar_width, bar_height]
         bg_bar_position = [self.rect.x, self.rect.y + self.rect.height, self.rect.width, bar_height]
@@ -58,10 +56,9 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(surface, bg_bar_color, bg_bar_position)
         pygame.draw.rect(surface, bar_color, bar_position)
 
-
     def damage(self, amount):
         self.health -= amount
         if self.health <= 0:
-            self.kill()
+            self.killplayer()
             self.game.gameover()
-            
+            self.game.enemyremain = 0
